@@ -3,7 +3,11 @@
 ![alt tag](http://i.imgur.com/pImqBs8.jpg)
 ![alt tag](http://i.imgur.com/juS8ebW.jpg)
 
-A tool to manage VT alerts locally. Make it easier to search, filter, view, etc.  Also has ability to check files in Crits.  Written in PHP
+A web interface to manage VT alerts locally. Make it easier to search, filter, view, etc.  Also has ability to check files in Crits.  Written in PHP.
+
+This will pull VT alets via the JSON api, store them into Mongo, and delete the alert on VT.
+
+WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort.  Quickly see duplicates.  Integrate with Crits to validate if this is a new sample.  View the yara syntax it alerted on.  See if my AV detects it according to VT.  Quickly remove false positives, like file type C (someone uploading snort or yara rules) or giant files sizes, or only wanting Win32 Exe files, etc.
 
 ### Web Interface
   - Set the configs in config.php
