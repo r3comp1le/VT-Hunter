@@ -31,7 +31,8 @@ A tool to manage VT alerts locally. Make it easier to search, filter, view, etc.
 
 ### FYI
   - Still working on Download Feature
-  - If you want to see AV other than McAfee, change the name on line 295 of vt.php:
+  - If you want to see AV other than McAfee, change the name on line 295 of vt.php
+  
   ```sh
   print "<td>".$array['scans']['McAfee']."</td>";
   ```
