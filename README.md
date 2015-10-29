@@ -12,18 +12,20 @@ A tool to manage VT alerts locally. Make it easier to search, filter, view, etc.
   - VT Intel API Key
   - PHP
   - mongodb and mongo php
-   ```sh
-    - apt-get install php-pear
-    ```
-    - http://pecl.php.net/pack/mongo (Download tgz)
-    ```sh
-     phpize
-    ./configure
-     make
-    sudo make install
-    sudo nano /etc/php5/apache2/php.ini
-    extension=mongo.so (add to file)
-    ```
+  ```sh
+  apt-get install php-pear
+  ```
+  
+  - http://pecl.php.net/pack/mongo (Download tgz)
+    
+  ```sh
+  phpize
+  ./configure
+  make
+  sudo make install
+  sudo nano /etc/php5/apache2/php.ini
+  extension=mongo.so (add to file)
+  ```
 
 ### FYI
   - Still working on Download Feature
