@@ -1,4 +1,5 @@
 # VT Hunter
+![alt tag](http://i.imgur.com/mEH2mvW.jpg)
 A tool to manage VT alerts locally. Make it easier to search, filter, view, etc.  Also has ability to check files in Crits.  Written in PHP
 
 ### Web Interface
