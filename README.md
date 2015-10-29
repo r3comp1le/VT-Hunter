@@ -7,6 +7,7 @@ A tool to manage VT alerts locally. Make it easier to search, filter, view, etc.
 
 ### Web Interface
   - Set the configs in config.php
+  - Go to vt.php in browser
 
 ### Requirements
   - VT Intel API Key
@@ -26,6 +27,7 @@ A tool to manage VT alerts locally. Make it easier to search, filter, view, etc.
   sudo nano /etc/php5/apache2/php.ini
   extension=mongo.so (add to file)
   ```
+  - Make vt.log writtable
 
 ### FYI
   - Still working on Download Feature
