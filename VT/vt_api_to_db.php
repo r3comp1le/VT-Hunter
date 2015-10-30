@@ -9,7 +9,7 @@ $log = fopen("vt.log", "a");
 $date = date("F j, Y, g:i a");
 fwrite($log, "<b>".$date."</b>\n");
 
-$url = "https://www.virustotal.com/intelligence/hunting/notifications-feed/?key=".$api_key;
+$url_vt_mal = "https://www.virustotal.com/intelligence/hunting/notifications-feed/?key=".$api_key;
 $opts = array(
     'http' => array(
         'method'  => 'GET',
@@ -18,7 +18,7 @@ $opts = array(
         )
 );
 $context  = stream_context_create($opts);
-$result = file_get_contents($url, false, $context);
+$result = file_get_contents($url_vt_mal, false, $context);
 $thejson = json_decode($result, true);
 
 $m = new MongoClient();
@@ -53,6 +53,7 @@ foreach ($thejson['notifications'] as $array)
     # If VT ID already exist, delete from VTI
     if($cursor->count() > 0)
     {
+        
         $del_url = "https://www.virustotal.com/intelligence/hunting/delete-notifications/programmatic/?key=".$api_key;
         $opts2 = array(
             'http' => array(
@@ -68,11 +69,59 @@ foreach ($thejson['notifications'] as $array)
         $thejson = json_decode($result2, true);
         if($thejson['deleted'] == 1){$int_del++;}
         else{fwrite($log, "ERROR!!!  Could not delete: " . $vt_id . "\n");}
+        
     }
     
     # Add to mongodb
     else
     {
+        # Query VT for allinfo
+        if($vt_search == "true")
+        {
+            $url_vt_search = "https://www.virustotal.com/vtapi/v2/file/report?allinfo=1&apikey=".$api_key;."&resource=".$vt_md5;
+            $opts_vt_search = array(
+                'http' => array(
+                    'method'  => 'GET',
+                    #'proxy' => 'tcp://proxy.com:55555',
+                    'request_fulluri' => true,
+                    )
+            );
+            $context_vt_search  = stream_context_create($opts_vt_search);
+            $result_vt_search = file_get_contents($url_vt_search, false, $context_vt_search);
+            $thejson_vt_search = json_decode($result_vt_search, true);
+            
+            if (isset($thejson_vt_search['times_submitted'])){$vt_times_submitted = $thejson_vt_search['times_submitted'];}else{$vt_times_submitted = "";}
+            if (isset($thejson_vt_search['submission_names'])){$vt_submission_names = $thejson_vt_search['submission_names'];}else{$vt_submission_names = "";}
+            
+            if (isset($thejson_vt_search['additional_info']['trid'])){$vt_trid = $thejson_vt_search['additional_info']['trid'];}else{$vt_trid = "";}
+            if (isset($thejson_vt_search['additional_info']['pe-imphash'])){$vt_imphash = $thejson_vt_search['additional_info']['pe-imphash'];}else{$vt_imphash = "";}
+            if (isset($thejson_vt_search['additional_info']['magic'])){$vt_magic = $thejson_vt_search['additional_info']['magic'];}else{$vt_magic = "";}
+            
+            if (isset($thejson_vt_search['additional_info']['pe-timestamp'])){$vt_timestamp = gmdate("Y-m-d\TH:i:s\Z",$thejson_vt_search['additional_info']['pe-timestamp']);}else{$vt_timestamp = "";}
+            if (isset($thejson_vt_search['additional_info']['f-prot-unpacker'])){$vt_unpacker = $thejson_vt_search['additional_info']['f-prot-unpacker'];}else{$vt_unpacker = "";}
+            if (isset($thejson_vt_search['authentihash'])){$vt_authentihash = $thejson_vt_search['authentihash'];}else{$vt_authentihash = "";}
+            if (isset($thejson_vt_search['ITW_urls'])){$vt_ITW_urls = $thejson_vt_search['ITW_urls'];}else{$vt_ITW_urls = "";}
+            
+            if (isset($thejson_vt_search['additional_info']['behaviour-v1']['network']['udp'])){$vt_behaviour_udp = $thejson_vt_search['additional_info']['behaviour-v1']['network']['udp'];}else{$vt_behaviour_udp = "";}
+            if (isset($thejson_vt_search['additional_info']['behaviour-v1']['network']['http'])){$vt_behaviour_http = $thejson_vt_search['additional_info']['behaviour-v1']['network']['http'];}else{$vt_behaviour_http = "";}
+            if (isset($thejson_vt_search['additional_info']['behaviour-v1']['network']['dns'])){$vt_behaviour_dns = $thejson_vt_search['additional_info']['behaviour-v1']['network']['dns'];}else{$vt_behaviour_dns = "";}
+            if (isset($thejson_vt_search['additional_info']['behaviour-v1']['network']['tcp'])){$vt_behaviour_tcp = $thejson_vt_search['additional_info']['behaviour-v1']['network']['tcp'];}else{$vt_behaviour_tcp = "";}
+            
+            if (isset($thejson_vt_search['additional_info']['sigcheck']['publisher'])){$vt_sigcheck_pub = $thejson_vt_search['additional_info']['sigcheck']['publisher'];}else{$vt_sigcheck_pub = "";}
+            if (isset($thejson_vt_search['additional_info']['sigcheck']['verified'])){$vt_sigcheck_verified = $thejson_vt_search['additional_info']['sigcheck']['verified'];}else{$vt_sigcheck_verified = "";}
+            if (isset($thejson_vt_search['additional_info']['sigcheck']['link date'])){$vt_sigcheck_date = $thejson_vt_search['additional_info']['sigcheck']['link date'];}else{$vt_sigcheck_date = "";}
+            if (isset($thejson_vt_search['additional_info']['sigcheck']['signers'])){$vt_sigcheck_signers = $thejson_vt_search['additional_info']['sigcheck']['signers'];}else{$vt_sigcheck_signers = "";}
+            
+            if (isset($thejson_vt_search['additional_info']['exiftool']['CompanyName'])){$vt_exif_company = $thejson_vt_search['additional_info']['exiftool']['CompanyName'];}else{$vt_exif_company = "";}
+            if (isset($thejson_vt_search['additional_info']['exiftool']['LanguageCode'])){$vt_exif_LanguageCode = $thejson_vt_search['additional_info']['exiftool']['LanguageCode'];}else{$vt_exif_LanguageCode = "";}
+            if (isset($thejson_vt_search['additional_info']['exiftool']['OriginalFileName'])){$vt_exif_OriginalFileName = $thejson_vt_search['additional_info']['exiftool']['OriginalFileName'];}else{$vt_exif_OriginalFileName = "";}
+            if (isset($thejson_vt_search['additional_info']['exiftool']['TimeStamp'])){$vt_exif_TimeStamp = $thejson_vt_search['additional_info']['exiftool']['TimeStamp'];}else{$vt_exif_TimeStamp = "";}
+            if (isset($thejson_vt_search['additional_info']['exiftool']['InternalName'])){$vt_exif_InternalName = $thejson_vt_search['additional_info']['exiftool']['InternalName'];}else{$vt_exif_InternalName= "";}
+            if (isset($thejson_vt_search['additional_info']['exiftool']['ProductName'])){$vt_exif_ProductName = $thejson_vt_search['additional_info']['exiftool']['ProductName'];}else{$vt_exif_ProductName = "";}
+
+
+        }
+        
         $sample_info = array(
             "date" => $vt_date,
             "first_seen" => $vt_first_seen, 
@@ -88,10 +137,34 @@ foreach ($thejson['notifications'] as $array)
             "size" => $vt_size,
             "subject" => $vt_subject,
             "total" => $vt_total, 
-            "type" => $vt_type
+            "type" => $vt_type,
+            "times_submitted" => $vt_times_submitted,
+            "submission_names" => $vt_submission_names,
+            "trid" => $vt_trid,
+            "imphash" => $vt_imphash,
+            "magic" => $vt_magic,
+            "sigcheck_pub" => $vt_sigcheck_pub,
+            "sigcheck_verified" => $vt_sigcheck_verified,
+            "sigcheck_date" => $vt_sigcheck_date,
+            "sigcheck_signers" => $vt_sigcheck_signers,
+            "timestamp" => $vt_timestamp,
+            "unpacker" => $vt_unpacker,
+            "authentihash" => $vt_authentihash,
+            "behaviour_upd" => $vt_behaviour_udp,
+            "behaviour_http" => $vt_behaviour_http,
+            "behaviour_dns" => $vt_behaviour_dns,
+            "behaviour_tcp" => $vt_behaviour_tcp,
+            "ITW_urls" => $vt_ITW_urls,
+            "exif_company" => $vt_exif_company,
+            "exif_LanguageCode" => $vt_exif_LanguageCode,
+            "exif_OriginalFileName" => $vt_exif_OriginalFileName,
+            "exif_TimeStamp" => $vt_exif_TimeStamp,
+            "exif_InternalName" => $vt_exif_InternalName,
+            "exif_ProductName" => $vt_exif_ProductName,
             );
         $collection->insert($sample_info);
         $int_add++;
+        
         
         $del_url = "https://www.virustotal.com/intelligence/hunting/delete-notifications/programmatic/?key=".$api_key;
         $opts3 = array(
@@ -108,10 +181,11 @@ foreach ($thejson['notifications'] as $array)
         $thejson = json_decode($result3, true);
         if($thejson['deleted'] == 1){$int_del++;}
         else{fwrite($log, "ERROR!!!  Could not delete: " . $vt_id . "\n");}
+        
     }
 }
-echo "Samples Added: <span class='label label-primary'>" . $int_del . "</span><br>";
-echo "VT Alerts Deleted: <span class='label label-danger'>"  . $int_add . "</span><br>";
+echo "Samples Added: <span class='label label-primary'>" . $int_add . "</span><br>";
+echo "VT Alerts Deleted: <span class='label label-danger'>"  . $int_del . "</span><br>";
 
 fwrite($log, "Samples Added: <span class='label label-primary'>" . $int_add . "</span>\n");
 fwrite($log, "VT Alerts Deleted: <span class='label label-danger'>" . $int_del . "</span>\n\n");

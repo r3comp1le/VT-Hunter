@@ -31,6 +31,9 @@ require('VT/config.php');
     .container{
         width: 100%;
     }
+    .progress-bar.animate {
+        width: 100%;
+    }
 }
 </style>
 
@@ -42,40 +45,104 @@ for(var i=0, n=checkboxes.length;i<n;i++) {
 }
 }
 
-function getModal() {
-$.post( "vt_getcontent.php", { "theId": theId },function( data )
-{
-    console.log(data);
-});
-}
-
-function launch_info_modal(id){
+function launch_info_modal(id, title){
     $.ajax({
         type: "POST",
         url: "VT/vt_getcontent.php",
         data: {theId:id},
         success: function(data){
+            
+            trid = data.trid.replace(/\n/g, '<br>');
+            behaviour_dns = "";
+            behaviour_http = "";
+            url = "";
 
+            for (i = 0; i < data.behaviour_dns.length; i++)
+            {
+                behaviour_dns += 
+                JSON.stringify(data.behaviour_dns[i].ip) +" : " + JSON.stringify(data.behaviour_dns[i].hostname) +"<br>" ;
+            }
+            
+            for (i = 0; i < data.behaviour_http.length; i++)
+            {
+                behaviour_http += JSON.stringify(data.behaviour_http[i].url) +"<br>";
+            }
+            
+            for (var urls in data.ITW_urls) 
+            {
+                url += urls + " : " + data.ITW_urls[urls] + "<br>";
+            }
+
+
+        $("#modal-title").html(title);
+        $("#modal-bod").html(
+            "<b>MD5</b>: " + data.md5 + "<br>" + 
+            "<b>SHA1</b>: " + data.sha1 + "<br>" + 
+            "<b>SHA256</b>: " + data.sha256 + "<br>" +
+            "<b>Authentihash</b>: " + data.authentihash + "<br>" +
+            "<b>Import Hash</b>: " + data.imphash + "<br>" +
+            "<b>Submission Names</b>: " + data.submission_names + "<br><br>" +
+            
+            "<b>First Seen</b>: " + data.first_seen + "<br>" +
+            "<b>Last Seen</b>: " + data.last_seen + "<br>" +
+            "<b>Timestamp</b>: " + data.timestamp + "<br><br>" +
+            
+            "<b>Size</b>: " + data.size + "<br>" +
+            "<b>Packer</b>: " + data.unpacker + "<br>" +
+            "<b>File Type</b>: " + data.type + "<br>" +
+            "<b>Magic</b>: " + data.magic + "<br><br>" +
+            
+            "<b>SigCheck</b>: <br>" + 
+            "Publishers - " + data.sigcheck_pub + "<br>" +
+            "Verified - " + data.sigcheck_verified + "<br>" +
+            "Date - " + data.sigcheck_date + "<br>" +
+            "Signers - " + data.sigcheck_signers + "<br><br>" +
+            
+            "<b>TRID</b>: <br>" + trid + "<br><br>" +
+            
+            "<b>Exif</b>: <br>" + 
+            "TimeStamp - " + data.exif_TimeStamp + "<br>" +
+            "Language - " + data.exif_LanguageCode + "<br>" +
+            "File Name - " + data.exif_OriginalFileName + "<br>" +
+            "Internal Name - " + data.exif_InternalName + "<br>" +
+            "Product Name - " + data.exif_ProductName + "<br>" +
+            "Company Name - " + data.exif_company + "<br><br>" +
+            
+            "<b>Behaviour</b>: <br>" + 
+            "UDP: <br> " + 
+            data.behaviour_upd + "<br>" +
+            "HTTP: <br>" +  
+            behaviour_http + "<br>" +
+            "DNS: <br>" + 
+            behaviour_dns + "<br>" +
+            "TCP: <br>" + 
+            data.behaviour_tcp + "<br>" +
+            
+            "<br>" +
+            "<b>ITW_urls</b>: " + url + "<br>" 
+            );
+
+        $('#scrap_mod').modal('show');
+        },
+    });
+}
+
+function launch_yara_modal(id, title){
+    $.ajax({
+        type: "POST",
+        url: "VT/vt_getcontent.php",
+        data: {theId:id},
+        success: function(data){
+          
         yara = data.match;
         yara0 = yara.replace(/\n/g, "<br>");
         yara1 = yara0.replace(/\*begin_highlight*/g, "<mark>");
         yara2 = yara1.replace(/\*end_highlight*/g, "</mark>");
         
-        $(".modal-body").html(
-            "<b>MD5</b>: " + data.md5 + "<br>" + 
-            "<b>SHA1</b>: " + data.sha1 + "<br>" + 
-            "<b>SHA256</b>: " + data.sha256 + "<br>" +
-            "<b>First Seen</b>: " + data.first_seen + "<br>" +
-            "<b>Last Seen</b>: " + data.last_seen + "<br>" +
-            "<b>Size</b>: " + data.size + "<br>" +
-            "<b>File Type</b>: " + data.type + "<br>"
-            )
-        $("#modal-yara").html(
-            "<b>Date</b>: " + data.date + "<br>" + 
-             yara2 
-            )
+        $("#modal-bod").html(yara2);
+        $("#modal-title").html(title + ' (' + data.date + ')');
+        $('#scrap_mod').modal('show');
 
-        $('#info_place').modal('show');
         },
     });
 }
@@ -173,25 +240,42 @@ function showlog(title) {
     
 }
 function reloadData(title) {
+    
+    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    $("#load-bod").html(resp)
+    $('#load_mod').modal('show');
+
     $.ajax({
         type: "GET",
         url: "VT/vt_api_to_db.php",
+        async: false,
         success: function(response){
+            $('#load_mod').modal('hide');
             $("#modal-bod").html(response);
             $("#modal-title").html(title);
             $('#scrap_mod').modal('show');
         },
     });
+    
 }
-
+    
 function showConfig(title) {
     response = "<?
+    #Mongo
     print "Mongo DB: " . $mongo_db . "<br>";
     print "Mongo Collection: " . $mongo_collection . "<br>";
+    print "<br>";
 
     #Crits Connections
     print "Crits Toggle: " . $crits_on . "<br>";
     print "Crits URL: " . $crits_url . "<br>";
+    print "<br>";
+    
+    #VT
+    print "VT Alert Toggle: " . $vt_mal . "<br>";
+    print "VT Search Toggle: " . $vt_mal . "<br>";
+    print "<br>";
+    
     ?>";
     $("#modal-bod").html(response);
     $("#modal-title").html(title);
@@ -259,8 +343,8 @@ foreach ($cursor as $array)
 {
     print "<tr id='tr".number_format($array['id'],0,'.','')."'>";
     print "<td><input type='checkbox' name='selected' id='".$array['md5']."' value='".number_format($array['id'],0,'.','')."'/></td>";
-    print "<td><button type='button' class='btn btn-info btn-xs' onclick='launch_info_modal(".number_format($array['id'],0,'.','').")'>".$int."</button></td>"; 
-    print "<td>".$array['ruleset_name']."</td>"; 
+    print "<td><button type='button' class='btn btn-info btn-xs' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>"; 
+    print "<td><button type='button' class='btn btn-warning btn-xs' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>"; 
     print "<td>".$array['subject']."</td>"; 
     print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>"; 
     
@@ -304,21 +388,6 @@ foreach ($cursor as $array)
     </table> 
       <!-- page end-->
 
-    <!-- Modal content-->
-    <div id="info_place" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header modal-primary"><h4 class="modal-title">Info</h4></div>
-              <div class="modal-body"></div>
-              <div class="modal-header modal-primary"><h4 class="modal-title">Yara Match</h4></div>
-              <div class="modal-body" id="modal-yara"></div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal content-->
     <!-- Dynamic Modal content-->
     <div id="scrap_mod" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -328,6 +397,13 @@ foreach ($cursor as $array)
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
               </div>
+            </div>
+        </div>
+    </div>
+    <div id="load_mod" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-body" id="load-bod"></div>
             </div>
         </div>
     </div>
