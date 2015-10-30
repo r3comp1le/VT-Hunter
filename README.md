@@ -15,6 +15,7 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
 
 ### Requirements
   - VT Intel API Key
+  - VT Search API Key (optional for more data)
   - PHP
   - mongodb and mongo php
   ```sh
@@ -42,4 +43,4 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   ```
 
 ### Coming Soon 
-  - Integrate VT search API to acquire more details on samples
+  - Graphs
