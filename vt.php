@@ -1,4 +1,6 @@
 <?
+$rootdir = $_SERVER['DOCUMENT_ROOT'];
+require($rootdir . '/auth.php');
 require('VT/config.php');
 ?>
 
@@ -8,7 +10,7 @@ require('VT/config.php');
     <meta charset="utf-8">
     <title>VT Hunter</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
 </head>
 
 <body>
@@ -273,7 +275,7 @@ function showConfig(title) {
     
     #VT
     print "VT Alert Toggle: " . $vt_mal . "<br>";
-    print "VT Search Toggle: " . $vt_mal . "<br>";
+    print "VT Search Toggle: " . $vt_search . "<br>";
     print "<br>";
     
     ?>";
@@ -415,6 +417,6 @@ foreach ($cursor as $array)
 
 <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
 </body>
 </html>

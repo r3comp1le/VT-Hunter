@@ -26,6 +26,7 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   - http://pecl.php.net/pack/mongo (Download tgz)
     
   ```sh
+  sudo apt-get install php5-dev
   phpize
   ./configure
   make

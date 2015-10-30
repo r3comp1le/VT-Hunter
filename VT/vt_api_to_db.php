@@ -53,7 +53,6 @@ foreach ($thejson['notifications'] as $array)
     # If VT ID already exist, delete from VTI
     if($cursor->count() > 0)
     {
-        
         $del_url = "https://www.virustotal.com/intelligence/hunting/delete-notifications/programmatic/?key=".$api_key;
         $opts2 = array(
             'http' => array(
@@ -69,7 +68,6 @@ foreach ($thejson['notifications'] as $array)
         $thejson = json_decode($result2, true);
         if($thejson['deleted'] == 1){$int_del++;}
         else{fwrite($log, "ERROR!!!  Could not delete: " . $vt_id . "\n");}
-        
     }
     
     # Add to mongodb
@@ -118,8 +116,6 @@ foreach ($thejson['notifications'] as $array)
             if (isset($thejson_vt_search['additional_info']['exiftool']['TimeStamp'])){$vt_exif_TimeStamp = $thejson_vt_search['additional_info']['exiftool']['TimeStamp'];}else{$vt_exif_TimeStamp = "";}
             if (isset($thejson_vt_search['additional_info']['exiftool']['InternalName'])){$vt_exif_InternalName = $thejson_vt_search['additional_info']['exiftool']['InternalName'];}else{$vt_exif_InternalName= "";}
             if (isset($thejson_vt_search['additional_info']['exiftool']['ProductName'])){$vt_exif_ProductName = $thejson_vt_search['additional_info']['exiftool']['ProductName'];}else{$vt_exif_ProductName = "";}
-
-
         }
         
         $sample_info = array(
