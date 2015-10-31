@@ -76,7 +76,7 @@ foreach ($thejson['notifications'] as $array)
         # Query VT for allinfo
         if($vt_search == "true")
         {
-            $url_vt_search = "https://www.virustotal.com/vtapi/v2/file/report?allinfo=1&apikey=".$api_key;."&resource=".$vt_md5;
+            $url_vt_search = "https://www.virustotal.com/vtapi/v2/file/report?allinfo=1&apikey=".$api_key."&resource=".$vt_md5;
             $opts_vt_search = array(
                 'http' => array(
                     'method'  => 'GET',

@@ -46,3 +46,7 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
 
 ### Coming Soon 
   - Graphs
+
+### TroubleShooting
+  - PHP Short tags - http://stackoverflow.com/questions/2185320/how-to-enable-php-short-tags
+  - 
