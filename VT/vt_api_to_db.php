@@ -1,15 +1,13 @@
 <?
 require('config.php');
 
-#API KEY
-$api_key = $vt_key;
-
-#log file
+# Log file
 $log = fopen("vt.log", "a");
 $date = date("F j, Y, g:i a");
 fwrite($log, "<b>".$date."</b>\n");
 
-$url_vt_mal = "https://www.virustotal.com/intelligence/hunting/notifications-feed/?key=".$api_key;
+# Get the alert feed
+$url_vt_mal = "https://www.virustotal.com/intelligence/hunting/notifications-feed/?key=".$vt_mal_key;
 $opts = array(
     'http' => array(
         'method'  => 'GET',
@@ -21,6 +19,7 @@ $context  = stream_context_create($opts);
 $result = file_get_contents($url_vt_mal, false, $context);
 $thejson = json_decode($result, true);
 
+# Mongo connection
 $m = new MongoClient();
 $db = $m->selectDB($mongo_db);
 $collection = new MongoCollection($db, $mongo_collection);
@@ -53,30 +52,35 @@ foreach ($thejson['notifications'] as $array)
     # If VT ID already exist, delete from VTI
     if($cursor->count() > 0)
     {
-        $del_url = "https://www.virustotal.com/intelligence/hunting/delete-notifications/programmatic/?key=".$api_key;
-        $opts2 = array(
-            'http' => array(
-            'method'  => 'POST',
-            #'proxy' => 'tcp://proxy.com:55555',
-            'header' => "Content-Type: application/json",
-            'content' => "[".$vt_id."]",
-            'request_fulluri' => true,
-            )
-        );
-        $context2  = stream_context_create($opts2);
-        $result2 = file_get_contents($del_url, false, $context2);
-        $thejson = json_decode($result2, true);
-        if($thejson['deleted'] == 1){$int_del++;}
-        else{fwrite($log, "ERROR!!!  Could not delete: " . $vt_id . "\n");}
+        if($delete_alerts == "true")
+        {
+            $del_url = "https://www.virustotal.com/intelligence/hunting/delete-notifications/programmatic/?key=".$vt_mal_key;
+            $opts2 = array(
+                'http' => array(
+                'method'  => 'POST',
+                #'proxy' => 'tcp://proxy.com:55555',
+                'header' => "Content-Type: application/json",
+                'content' => "[".$vt_id."]",
+                'request_fulluri' => true,
+                )
+            );
+            $context2  = stream_context_create($opts2);
+            $result2 = file_get_contents($del_url, false, $context2);
+            $thejson = json_decode($result2, true);
+            if($thejson['deleted'] == 1){$int_del++;}
+            else{fwrite($log, "ERROR!!!  Could not delete: " . $vt_id . "\n");}
+        }
     }
     
     # Add to mongodb
     else
     {
-        # Query VT for allinfo
+        $sample_details = array();
+        
+        # Query VT for allinfo parameter
         if($vt_search == "true")
         {
-            $url_vt_search = "https://www.virustotal.com/vtapi/v2/file/report?allinfo=1&apikey=".$api_key."&resource=".$vt_md5;
+            $url_vt_search = "https://www.virustotal.com/vtapi/v2/file/report?allinfo=1&apikey=".$vt_search_key."&resource=".$vt_md5;
             $opts_vt_search = array(
                 'http' => array(
                     'method'  => 'GET',
@@ -116,24 +120,10 @@ foreach ($thejson['notifications'] as $array)
             if (isset($thejson_vt_search['additional_info']['exiftool']['TimeStamp'])){$vt_exif_TimeStamp = $thejson_vt_search['additional_info']['exiftool']['TimeStamp'];}else{$vt_exif_TimeStamp = "";}
             if (isset($thejson_vt_search['additional_info']['exiftool']['InternalName'])){$vt_exif_InternalName = $thejson_vt_search['additional_info']['exiftool']['InternalName'];}else{$vt_exif_InternalName= "";}
             if (isset($thejson_vt_search['additional_info']['exiftool']['ProductName'])){$vt_exif_ProductName = $thejson_vt_search['additional_info']['exiftool']['ProductName'];}else{$vt_exif_ProductName = "";}
-        }
-        
-        $sample_info = array(
-            "date" => $vt_date,
-            "first_seen" => $vt_first_seen, 
-            "id" => $vt_id,
-            "last_seen" => $vt_last_seen, 
-            "match" => $vt_match,
-            "md5" => $vt_md5, 
-            "positives" => $vt_positives,
-            "ruleset_name" => $vt_ruleset_name, 
-            "scans" => $vt_scans,
-            "sha1" => $vt_sha1, 
-            "sha256" => $vt_sha256,
-            "size" => $vt_size,
-            "subject" => $vt_subject,
-            "total" => $vt_total, 
-            "type" => $vt_type,
+            
+            #search api vars
+            $sample_search_info = array(
+            "sample_info" => "true",
             "times_submitted" => $vt_times_submitted,
             "submission_names" => $vt_submission_names,
             "trid" => $vt_trid,
@@ -158,25 +148,52 @@ foreach ($thejson['notifications'] as $array)
             "exif_InternalName" => $vt_exif_InternalName,
             "exif_ProductName" => $vt_exif_ProductName,
             );
-        $collection->insert($sample_info);
+            $sample_details = array_merge($sample_details, $sample_search_info); 
+        }
+        
+        #vt alert vars
+        $sample_alert_info = array(
+            "alert_info" => "true",
+            "date" => $vt_date,
+            "first_seen" => $vt_first_seen, 
+            "id" => $vt_id,
+            "last_seen" => $vt_last_seen, 
+            "match" => $vt_match,
+            "md5" => $vt_md5, 
+            "positives" => $vt_positives,
+            "ruleset_name" => $vt_ruleset_name, 
+            "scans" => $vt_scans,
+            "sha1" => $vt_sha1, 
+            "sha256" => $vt_sha256,
+            "size" => $vt_size,
+            "subject" => $vt_subject,
+            "total" => $vt_total, 
+            "type" => $vt_type
+            );
+            
+        $sample_details = array_merge($sample_details, $sample_alert_info);    
+            
+        $collection->insert($sample_details);
         $int_add++;
         
-        
-        $del_url = "https://www.virustotal.com/intelligence/hunting/delete-notifications/programmatic/?key=".$api_key;
-        $opts3 = array(
-            'http' => array(
-            'method'  => 'POST',
-            #'proxy' => 'tcp://proxy.com:55555',
-            'header' => "Content-Type: application/json",
-            'content' => "[".$vt_id."]",
-            'request_fulluri' => true,
-            )
-        );
-        $context3  = stream_context_create($opts3);
-        $result3 = file_get_contents($del_url, false, $context3);
-        $thejson = json_decode($result3, true);
-        if($thejson['deleted'] == 1){$int_del++;}
-        else{fwrite($log, "ERROR!!!  Could not delete: " . $vt_id . "\n");}
+        if($delete_alerts == "true")
+        {
+            $del_url = "https://www.virustotal.com/intelligence/hunting/delete-notifications/programmatic/?key=".$vt_mal_key;
+            $opts3 = array(
+                'http' => array(
+                'method'  => 'POST',
+                #'proxy' => 'tcp://proxy.com:55555',
+                'header' => "Content-Type: application/json",
+                'content' => "[".$vt_id."]",
+                'request_fulluri' => true,
+                )
+            );
+            $context3  = stream_context_create($opts3);
+            $result3 = file_get_contents($del_url, false, $context3);
+            $thejson = json_decode($result3, true);
+            if($thejson['deleted'] == 1){$int_del++;}
+            else{fwrite($log, "ERROR!!!  Could not delete: " . $vt_id . "\n");}
+        }
         
     }
 }

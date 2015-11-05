@@ -4,7 +4,7 @@
 ![alt tag](http://i.imgur.com/lw2Rqgd.jpg)
 ![alt tag](http://i.imgur.com/qR1veRk.jpg)
 
-A web interface to manage VT alerts locally. Make it easier to search, filter, view, etc.  Also has ability to check files in Crits.  Written in PHP.
+A web interface to manage VT alerts locally (pulls them down from VT). Make it easier to search, filter, view, etc.  Also has ability to check files in Crits.  Written in PHP.
 
 This will pull VT alets via the JSON api, store them into Mongo, and delete the alert on VT.
 
@@ -49,4 +49,3 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
 
 ### TroubleShooting
   - PHP Short tags - http://stackoverflow.com/questions/2185320/how-to-enable-php-short-tags
-  - 

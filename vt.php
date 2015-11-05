@@ -1,6 +1,4 @@
 <?
-$rootdir = $_SERVER['DOCUMENT_ROOT'];
-require($rootdir . '/auth.php');
 require('VT/config.php');
 ?>
 
@@ -10,7 +8,7 @@ require('VT/config.php');
     <meta charset="utf-8">
     <title>VT Hunter</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
 </head>
 
 <body>
@@ -54,11 +52,25 @@ function launch_info_modal(id, title){
         data: {theId:id},
         success: function(data){
             
-            trid = data.trid.replace(/\n/g, '<br>');
             behaviour_dns = "";
             behaviour_http = "";
             url = "";
-
+            sample_info = "";
+            alert_info = "";
+            
+            alert_info = 
+            "<b>MD5</b>: " + data.md5 + "<br>" + 
+            "<b>SHA1</b>: " + data.sha1 + "<br>" + 
+            "<b>SHA256</b>: " + data.sha256 + "<br>" +
+            "<b>First Seen</b>: " + data.first_seen + "<br>" +
+            "<b>Last Seen</b>: " + data.last_seen + "<br>" +
+            "<b>File Type</b>: " + data.type + "<br>" +
+            "<b>Size</b>: " + data.size + "<br>";
+            
+            if(typeof data.sample_info !== 'undefined')
+            {
+            trid = data.trid.replace(/\n/g, '<br>');
+            
             for (i = 0; i < data.behaviour_dns.length; i++)
             {
                 behaviour_dns += 
@@ -74,24 +86,14 @@ function launch_info_modal(id, title){
             {
                 url += urls + " : " + data.ITW_urls[urls] + "<br>";
             }
-
-
-        $("#modal-title").html(title);
-        $("#modal-bod").html(
-            "<b>MD5</b>: " + data.md5 + "<br>" + 
-            "<b>SHA1</b>: " + data.sha1 + "<br>" + 
-            "<b>SHA256</b>: " + data.sha256 + "<br>" +
+            
+            sample_info = 
             "<b>Authentihash</b>: " + data.authentihash + "<br>" +
             "<b>Import Hash</b>: " + data.imphash + "<br>" +
             "<b>Submission Names</b>: " + data.submission_names + "<br><br>" +
-            
-            "<b>First Seen</b>: " + data.first_seen + "<br>" +
-            "<b>Last Seen</b>: " + data.last_seen + "<br>" +
             "<b>Timestamp</b>: " + data.timestamp + "<br><br>" +
-            
-            "<b>Size</b>: " + data.size + "<br>" +
             "<b>Packer</b>: " + data.unpacker + "<br>" +
-            "<b>File Type</b>: " + data.type + "<br>" +
+            
             "<b>Magic</b>: " + data.magic + "<br><br>" +
             
             "<b>SigCheck</b>: <br>" + 
@@ -121,7 +123,17 @@ function launch_info_modal(id, title){
             data.behaviour_tcp + "<br>" +
             
             "<br>" +
-            "<b>ITW_urls</b>: " + url + "<br>" 
+            "<b>ITW_urls</b>: " + url + "<br>";
+            }
+
+
+        $("#modal-title").html(title);
+        $("#modal-bod").html(
+            "<h2>Alert Details</h2>" +
+            alert_info +
+            "<hr>" +
+            "<h2>Sample Details</h2>" +
+            sample_info
             );
 
         $('#scrap_mod').modal('show');
@@ -175,7 +187,7 @@ function downloadFunc() {
     $("input:checkbox[name=selected]:checked").each(function(){
         md5 = this.id;
         md5s.push(md5);
-        console.log(md5);
+        //console.log(md5);
     });
     
     /*$.post( "vtdown.php", { "md5s[]": md5s },function( data )
@@ -211,12 +223,12 @@ function delFunc(id) {
             if(data.trim() == "200")
             {      
                 removeRow(trid);
-                console.log("Deleted");
+                //console.log("Deleted");
             }
             else
             {
-                console.log("Did not delete");
-                console.log(data);
+                //console.log("Did not delete");
+                //console.log(data);
             }
         },
         async:   false
@@ -264,18 +276,19 @@ function reloadData(title) {
 function showConfig(title) {
     response = "<?
     #Mongo
-    print "Mongo DB: " . $mongo_db . "<br>";
-    print "Mongo Collection: " . $mongo_collection . "<br>";
+    print "<b>Mongo DB</b>: " . $mongo_db . "<br>";
+    print "<b>Mongo Collection</b>: " . $mongo_collection . "<br>";
     print "<br>";
 
     #Crits Connections
-    print "Crits Toggle: " . $crits_on . "<br>";
-    print "Crits URL: " . $crits_url . "<br>";
+    print "<b>Crits Integration</b>: " . $crits_on . "<br>";
+    print "<b>Crits URL</b>: " . $crits_url . "<br>";
     print "<br>";
     
     #VT
-    print "VT Alert Toggle: " . $vt_mal . "<br>";
-    print "VT Search Toggle: " . $vt_search . "<br>";
+    print "<b>VT Alerts</b>: " . $vt_mal . "<br>";
+    print "<b>VT Search</b>: " . $vt_search . "<br>";
+    print "<b>Delete Alerts from VT</b>: " . $delete_alerts . "<br>";
     print "<br>";
     
     ?>";
@@ -417,6 +430,6 @@ foreach ($cursor as $array)
 
 <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
 </body>
 </html>
