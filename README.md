@@ -47,13 +47,13 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   - Mongo Settings (database and collection)
   - Crits Settings (server and creds)
   - VT Settings
-    - Hunting API Key
-    - Searching API key
+    - Hunting API Key (VirusTotal Intelligence)
+    - Searching API key (VirusTotal Private Mass API)
     - Delete Alerts from VT
-
 
 ### Coming Soon 
   - Graphs
 
 ### TroubleShooting
   - PHP Short tags - http://stackoverflow.com/questions/2185320/how-to-enable-php-short-tags
+  - 
