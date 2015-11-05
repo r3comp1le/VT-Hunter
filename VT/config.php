@@ -10,11 +10,11 @@ $crits_api_key = "123456789";
 $crits_user = "username";
 
 #VT 
-#search VT alerts
+#VirusTotal Intelligence API
 $vt_mal = "true";  
 $vt_mal_key = "123456789";
 
-#search VT sample data
+#VirusTotal Private Mass API
 $vt_search = "true"; 
 $vt_search_key = "0987654321";
 
