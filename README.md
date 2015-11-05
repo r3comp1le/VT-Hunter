@@ -43,6 +43,14 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   ```sh
   print "<td>".$array['scans']['McAfee']."</td>";
   ```
+### Config Settings
+  - Mongo Settings (database and collection)
+  - Crits Settings (server and creds)
+  - VT Settings
+    - Hunting API Key
+    - Searching API key
+    - Delete Alerts from VT
+
 
 ### Coming Soon 
   - Graphs
