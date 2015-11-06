@@ -56,4 +56,9 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
 
 ### TroubleShooting
   - PHP Short tags - http://stackoverflow.com/questions/2185320/how-to-enable-php-short-tags
-  - 
+  
+    ```sh
+    /etc/php5/apache2/php.ini:short_open_tag = On
+    /etc/php5/cli/php.ini.ucf-old:short_open_tag = On
+    /etc/php5/cli/php.ini:short_open_tag = On
+    ```
