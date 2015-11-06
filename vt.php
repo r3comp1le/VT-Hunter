@@ -9,6 +9,10 @@ require('VT/config.php');
     <title>VT Hunter</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
+    
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
 </head>
 
 <body>
@@ -212,6 +216,7 @@ function deleteFunc() {
     });
     $('#scrap_mod').modal('hide');
 }
+
 function delFunc(id) {
     trid = "#tr"+id;
     //console.log(trid);
@@ -234,6 +239,51 @@ function delFunc(id) {
         async:   false
     });
 }
+
+function archFunc(id) {
+    console.log(id);
+    trid = "#tr"+id;
+    $.ajax({
+        type: "POST",
+        url: "VT/vt_archive.php",
+        data: {archId:id},
+        success: function(data){
+            if(data.trim() == "archived")
+            {      
+                removeRow(trid);
+                console.log("Archived");
+            }
+            else
+            {
+                console.log(data);
+            }
+        },
+        async:   false
+    });
+}
+
+function UnarchFunc(id) {
+    console.log(id);
+    trid = "#tr"+id;
+    $.ajax({
+        type: "POST",
+        url: "VT/vt_unarchive.php",
+        data: {archId:id},
+        success: function(data){
+            if(data.trim() == "unarchived")
+            {      
+                removeRow(trid);
+                console.log("UnArchived");
+            }
+            else
+            {
+                console.log(data);
+            }
+        },
+        async:   false
+    });
+}
+
 function removeRow(trid) {
     var $killrow = $(trid);
     $killrow.addClass("danger");
@@ -297,13 +347,17 @@ function showConfig(title) {
     $('#scrap_mod').modal('show');
 }
 
+jQuery(document).ready(function($){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
 
 </script>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">VT Hunter</a>
+      <a class="navbar-brand" href="vt.php">VT Hunter</a>
     </div>
   </div>
 </nav>
@@ -322,15 +376,19 @@ catch ( MongoConnectionException $e )
     echo '<div class="alert alert-block alert-danger fade in"><button data-dismiss="alert" class="close close-sm" type="button"><i class="icon-remove"></i></button>Can\'t Connect to Mongo</div>';
     exit();
 }
-$cursor = $collection->find();
+
+#Chec Archived Option
+if($_GET['archive'] == true){$archQuery = array('archive' => 'true');}else{$archQuery = array('archive' => null);}
+$cursor = $collection->find($archQuery);
 ?>
 
-<button class="btn btn-info" type="button">Samples <span class="badge"><?print $cursor->count();?></span></button>
-<button type='button' class='btn btn-primary' onclick="downloadFunc('Download')">Download</button>
-<button type='button' class='btn btn-danger' onclick="confirmDel('Delete')">Delete</button>
-<button type='button' class='btn btn-warning' onclick="reloadData('VT Sync')">ReLoad</button>
-<button type='button' class='btn btn-warning' onclick="showlog('Log')">Log</button>
-<button type='button' class='btn btn-warning' onclick="showConfig('Config')" align=right>Config</button>
+<button class="btn btn-info" data-toggle='tooltip' data-placement='top' title='Alerts in DB' type="button">Samples <span class="badge"><?print $cursor->count();?></span></button>
+<button type='button' class='btn btn-primary' data-toggle='tooltip' data-placement='top' title='Download Zip' onclick="downloadFunc('Download')">Download</button>
+<button type='button' class='btn btn-danger' data-toggle='tooltip' data-placement='top' title='Delete from DB' onclick="confirmDel('Delete')">Delete</button>
+<button type='button' class='btn btn-warning' data-toggle='tooltip' data-placement='top' title='Get Alerts from VT' onclick="reloadData('VT Sync')">Pull VT</button>
+<button type='button' class='btn btn-warning' data-toggle='tooltip' data-placement='top' title='Show Log' onclick="showlog('Log')">Log</button>
+<button type='button' class='btn btn-warning' data-toggle='tooltip' data-placement='top' title='Show Config' onclick="showConfig('Config')" align=right>Config</button>
+<button type='button' class='btn btn-success' data-toggle='tooltip' data-placement='top' title='Show Archived' onclick="location.href = 'vt.php?archive=true';" align=right>Achived</button>
 
 <div id="filter-bar"> </div>
 <table id='mytable' data-toggle="table" data-classes="table table-hover table-condensed" data-striped="true" data-show-columns="true" data-search="true" data-pagination="true" data-page-size="20">
@@ -347,7 +405,7 @@ $cursor = $collection->find();
   <th data-field="McAfee" data-sortable="true">McAfee</th>
   <th data-field="size" data-sortable="true">Size</th>
   <th data-field="Type" data-sortable="true">Type</th>
-  <th data-field="id" data-sortable="false">Delete</th>
+  <th data-field="id" data-sortable="false">Action</th>
 </tr>
 </thead>
 <tbody>
@@ -356,10 +414,10 @@ $int = 1;
 
 foreach ($cursor as $array)
 {
-    print "<tr id='tr".number_format($array['id'],0,'.','')."'>";
+    if($array['archive'] == true){print "<tr class='success' id='tr".number_format($array['id'],0,'.','')."'>";}else{print "<tr id='tr".number_format($array['id'],0,'.','')."'>";}
     print "<td><input type='checkbox' name='selected' id='".$array['md5']."' value='".number_format($array['id'],0,'.','')."'/></td>";
-    print "<td><button type='button' class='btn btn-info btn-xs' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>"; 
-    print "<td><button type='button' class='btn btn-warning btn-xs' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>"; 
+    print "<td><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>"; 
+    print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>"; 
     print "<td>".$array['subject']."</td>"; 
     print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>"; 
     
@@ -388,13 +446,17 @@ foreach ($cursor as $array)
     }
     else
     {
-        print "<td><button type='button' class='btn btn-warning btn-xs' onclick=\"launch_av_modal(".number_format($array['id'],0,'.','').",'AV Summary')\">".$array['positives']."/".$array['total']."</button></td>";  
+        print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='AV Results' onclick=\"launch_av_modal(".number_format($array['id'],0,'.','').",'AV Summary')\">".$array['positives']."/".$array['total']."</button></td>";  
     }            
 
     print "<td>".$array['scans']['McAfee']."</td>";
     print "<td>".$array['size']."</td>";
     print "<td>".$array['type']."</td>";
-    print "<td><button type='button' class='btn btn-danger btn-xs' onclick='delFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>";
+    print "<td>
+    <button type='button' class='btn btn-danger btn-xs' data-toggle='tooltip' data-placement='top' title='Delete' onclick='delFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button>
+    <button type='button' class='btn btn-success btn-xs' data-toggle='tooltip' data-placement='top' title='Archive' onclick='archFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-floppy-saved' aria-hidden='true'></span></button>
+    <button type='button' class='btn btn-primary btn-xs' data-toggle='tooltip' data-placement='top' title='UnArchive' onclick='UnarchFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-floppy-remove' aria-hidden='true'></span></button>
+    </td>";
     print "</tr>";
     $int++;
 }
@@ -427,9 +489,5 @@ foreach ($cursor as $array)
 <p>&copy; r3comp1le 2015</p>
 </footer>
 </div> <!-- /container -->
-
-<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
 </body>
 </html>
