@@ -1,0 +1,10 @@
+11.4.15
+- Seperate VT Intel and Private Data
+- Logic to check for Private Data
+- Better Config
+- ReadMe fixes
+
+11.6.15
+- Archive and UnArchive Alerts
+- Tool Tips
+- Archive View button
