@@ -292,17 +292,18 @@ function removeRow(trid) {
 
 function showlog(title) {
     jQuery.get('VT/vt.log', function(data) {
-        data_new = data.replace(/\n/g, "<br>end");
-        var logz = data_new.split("end");
-        start = (logz.length - 14);
-        end = logz.length;
-        var log = logz.slice(start, end)
+        logz = data.replace(/\n/g, "<br>\n");
+        var lines = logz.split("\n");
+        start = (lines.length - 4);
+        end = lines.length;
+        var log = lines.slice(start, end)
         $("#modal-bod").html(log)
         $("#modal-title").html(title);
         $('#scrap_mod').modal('show');
     });
     
 }
+
 function reloadData(title) {
     
     resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
