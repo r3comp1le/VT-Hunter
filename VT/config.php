@@ -18,5 +18,5 @@ $vt_mal_key = "123456789";
 $vt_search = "false"; 
 $vt_search_key = "0987654321";
 
-$delete_alerts = "true"
+$delete_alerts = "false"
 ?>
