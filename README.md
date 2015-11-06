@@ -51,6 +51,15 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
     - Searching API key (VirusTotal Private Mass API)
     - Delete Alerts from VT
 
+### UI Buttons
+  - Samples = # of samples in DB
+  - Download = no working right now
+  - Delete = Delete record from DB
+  - Pull VT = Grab alerts from VT
+  - Log = Show Log
+  - Config = Show some configs
+  - Archive = Archive Results
+
 ### Coming Soon 
   - Graphs
 
