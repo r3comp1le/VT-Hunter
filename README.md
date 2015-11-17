@@ -1,5 +1,5 @@
 # VT Hunter
-![alt tag](http://i.imgur.com/ohtxGJb.jpg)
+![alt tag](http://i.imgur.com/3j0azyY.jpg)
 ![alt tag](http://i.imgur.com/5ZwF1w1.jpg)
 ![alt tag](http://i.imgur.com/lw2Rqgd.jpg)
 ![alt tag](http://i.imgur.com/qR1veRk.jpg)
@@ -55,17 +55,13 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
 
 ### UI Buttons
   - Samples = # of samples in DB
-  - Download = no working right now
+  - Download = not working right now
   - Delete = Delete record from DB
   - Pull VT = Grab alerts from VT
+  - Pull Crits = Check if sample exists in Crits
   - Log = Show Log
   - Config = Show some configs
-  - Archive = Archive Results
-
-### Coming Soon 
-  - Graphs
-  - Downloading
-  - Notes
+  - Archive = Archive a sample
 
 ### TroubleShooting
   - PHP Short tags - http://stackoverflow.com/questions/2185320/how-to-enable-php-short-tags
