@@ -8,3 +8,13 @@
 - Archive and UnArchive Alerts
 - Tool Tips
 - Archive View button
+
+11.17.15
+- Improved Menu (Dropdowns)
+- Better Crits config
+- Crits Pull option instead of reruning on refresh
+- Archive Menu
+- Place Holder for About
+- Green highlight for archive action
+- Refresh button on Modals
+
