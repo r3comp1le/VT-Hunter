@@ -43,10 +43,10 @@ require('VT/config.php');
 
 <script>
 function toggle(source) {
-checkboxes = document.getElementsByName('selected');
-for(var i=0, n=checkboxes.length;i<n;i++) {
-    checkboxes[i].checked = source.checked;
-}
+    checkboxes = document.getElementsByName('selected');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
 }
 
 function launch_info_modal(id, title){
@@ -191,6 +191,7 @@ function downloadFunc() {
     $("input:checkbox[name=selected]:checked").each(function(){
         md5 = this.id;
         md5s.push(md5);
+        alert(md5);
         //console.log(md5);
     });
     
@@ -215,6 +216,7 @@ function deleteFunc() {
         delFunc(id);
     });
     $('#scrap_mod').modal('hide');
+    location.reload();
 }
 
 function delFunc(id) {
@@ -250,7 +252,7 @@ function archFunc(id) {
         success: function(data){
             if(data.trim() == "archived")
             {      
-                removeRow(trid);
+                removeRowA(trid);
                 console.log("Archived");
             }
             else
@@ -290,6 +292,11 @@ function removeRow(trid) {
     $killrow.fadeOut(1000, function(){$killrow.remove()});
 }
 
+function removeRowA(trid) {
+    var $killrow = $(trid);
+    $killrow.addClass("success");
+    $killrow.fadeOut(1000, function(){$killrow.remove()});
+}
 function showlog(title) {
     jQuery.get('VT/vt.log', function(data) {
         logz = data.replace(/\n/g, "<br>\n");
@@ -313,6 +320,25 @@ function reloadData(title) {
     $.ajax({
         type: "GET",
         url: "VT/vt_api_to_db.php",
+        async: false,
+        success: function(response){
+            $('#load_mod').modal('hide');
+            $("#modal-bod").html(response);
+            $("#modal-title").html(title);
+            $('#scrap_mod').modal('show');
+        },
+    });
+    
+}
+function runCrits(title) {
+    
+    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    $("#load-bod").html(resp)
+    $('#load_mod').modal('show');
+
+    $.ajax({
+        type: "GET",
+        url: "VT/vt_runCrits.php",
         async: false,
         success: function(response){
             $('#load_mod').modal('hide');
@@ -348,6 +374,10 @@ function showConfig(title) {
     $('#scrap_mod').modal('show');
 }
 
+function reloadPage(){
+    location.reload();
+}
+
 jQuery(document).ready(function($){
     $('[data-toggle="tooltip"]').tooltip();
 });
@@ -359,6 +389,8 @@ jQuery(document).ready(function($){
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="vt.php">VT Hunter</a>
+      <a class="navbar-brand" href="vt.php?archive=true">Archived</a>
+      <a class="navbar-brand" href="about.php">About</a>
     </div>
   </div>
 </nav>
@@ -379,17 +411,35 @@ catch ( MongoConnectionException $e )
 }
 
 #Chec Archived Option
-if($_GET['archive'] == true){$archQuery = array('archive' => 'true');}else{$archQuery = array('archive' => null);}
+if($_GET['archive'] == 'true'){$archQuery = array('archive' => 'true');}else{$archQuery = array('archive' => null);}
 $cursor = $collection->find($archQuery);
 ?>
+<div class="btn-group">
+<button class="btn btn-info" type="button">Alerts <span class="badge"><?print $cursor->count();?></span></button>
+</div>
 
-<button class="btn btn-info" data-toggle='tooltip' data-placement='top' title='Alerts in DB' type="button">Samples <span class="badge"><?print $cursor->count();?></span></button>
-<button type='button' class='btn btn-primary' data-toggle='tooltip' data-placement='top' title='Download Zip' onclick="downloadFunc('Download')">Download</button>
+<div class="btn-group">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download<span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li onclick="downloadFunc('Download')"><a>MD5</a></li>
+    <li onclick="downloadFunc('Download')"><a>SHA</a></li>
+  </ul>
+</div>
+
 <button type='button' class='btn btn-danger' data-toggle='tooltip' data-placement='top' title='Delete from DB' onclick="confirmDel('Delete')">Delete</button>
-<button type='button' class='btn btn-warning' data-toggle='tooltip' data-placement='top' title='Get Alerts from VT' onclick="reloadData('VT Sync')">Pull VT</button>
-<button type='button' class='btn btn-warning' data-toggle='tooltip' data-placement='top' title='Show Log' onclick="showlog('Log')">Log</button>
-<button type='button' class='btn btn-warning' data-toggle='tooltip' data-placement='top' title='Show Config' onclick="showConfig('Config')" align=right>Config</button>
-<button type='button' class='btn btn-success' data-toggle='tooltip' data-placement='top' title='Show Archived' onclick="location.href = 'vt.php?archive=true';" align=right>Achived</button>
+
+<div class="btn-group">
+  <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Settings<span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li onclick="showlog('Log')"><a data-toggle='tooltip' data-placement='top' title='Show Log'>Log</a></li>
+    <li onclick="showConfig('Config')"><a data-toggle='tooltip' data-placement='top' title='Show Config'>Config</a></li>
+    <li onclick="reloadData('VT Sync')"><a data-toggle='tooltip' data-placement='top' title='Get Alerts from VT'>Pull VT</a></li>
+    <li onclick="runCrits('Crits Lookup')"><a data-toggle='tooltip' data-placement='top' title='Crits Lookup'>Pull Crits</a></li>
+  </ul>
+</div>
+
 
 <div id="filter-bar"> </div>
 <table id='mytable' data-toggle="table" data-classes="table table-hover table-condensed" data-striped="true" data-show-columns="true" data-search="true" data-pagination="true" data-page-size="20">
@@ -423,20 +473,13 @@ foreach ($cursor as $array)
     print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>"; 
     
     # Crits check
-    if($crits_on == "true")
+    if($array['crits'] == "true")
     {
-        $url = $crits_url . "/api/v1/samples/?c-md5=".$array['md5']."&username=".$crits_user."&api_key=".$crits_api_key."&regex=1";
-        $result2 = file_get_contents($url, false);
-        $thejson = json_decode($result2, true);
-        if($thejson['meta']['total_count'] == 1)
-        {
-            print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>"; 
-        }
-        print "<td>Error</td>";
+        print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>"; 
     }
     else
     {
-        print "<td>OFF</td>";
+        print "<td>N/A</td>";
     }
     
     #AV Logic
@@ -473,6 +516,7 @@ foreach ($cursor as $array)
               <div class="modal-header modal-primary"><h4 class="modal-title" id="modal-title"></h4></div>
               <div class="modal-body" id="modal-bod"></div>
               <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="reloadPage()">Refresh</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
               </div>
             </div>
