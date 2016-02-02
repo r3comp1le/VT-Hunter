@@ -40,14 +40,10 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
 
 ### FYI
   - Still working on Download Feature
-  - If you want to see AV other than McAfee, change the name on line 295 of vt.php
-  
-  ```sh
-  print "<td>".$array['scans']['McAfee']."</td>";
-  ```
+
 ### Config Settings
   - Mongo Settings (database and collection)
-  - Crits Settings (server and creds)
+  - Crits Settings (server and api key)
   - VT Settings
     - Hunting API Key (VirusTotal Intelligence)
     - Searching API key (VirusTotal Private Mass API)
