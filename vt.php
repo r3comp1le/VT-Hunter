@@ -61,82 +61,134 @@ function launch_info_modal(id, title){
             url = "";
             sample_info = "";
             alert_info = "";
+            debug_name = "";
+            debug_signature = "";
+            tags = "";
             
             alert_info = 
-            "<b>MD5</b>: " + data.md5 + "<br>" + 
-            "<b>SHA1</b>: " + data.sha1 + "<br>" + 
-            "<b>SHA256</b>: " + data.sha256 + "<br>" +
-            "<b>First Seen</b>: " + data.first_seen + "<br>" +
-            "<b>Last Seen</b>: " + data.last_seen + "<br>" +
-            "<b>File Type</b>: " + data.type + "<br>" +
-            "<b>Size</b>: " + data.size + "<br>";
+            "<span class='label label-primary'>Sample Details</span>" +
+            "<table class='table table-bordered table-striped table-condensed'>" +
+                "<tbody>" +
+                  "<tr><th>MD5</th><td><a href='https://www.virustotal.com/intelligence/search/?query="+ data.md5 +"#md5'>" + data.md5 + "</a></td></tr>" +
+                  "<tr><th>SHA1</th><td>" + data.sha1 + "</td></tr>" +
+                  "<tr><th>SHA256</th><td>" + data.sha256 + "</td></tr>" +
+                  "<tr><th>First Seen</th><td>" + data.first_seen + "</td></tr>" +
+                  "<tr><th>Last Seen</th><td>" + data.last_seen + "</td></tr>" +
+                  "<tr><th>File Type</th><td>" + data.type + "</td></tr>" +
+                  "<tr><th>Size</th><td>" + data.size + "</td></tr>" +
+                "</tbody>" +
+              "</table>";
             
             if(typeof data.sample_info !== 'undefined')
             {
             trid = data.trid.replace(/\n/g, '<br>');
-            
-            for (i = 0; i < data.behaviour_dns.length; i++)
-            {
-                behaviour_dns += 
-                JSON.stringify(data.behaviour_dns[i].ip) +" : " + JSON.stringify(data.behaviour_dns[i].hostname) +"<br>" ;
+            try {
+                for (i = 0; i < data.behaviour_dns.length; i++)
+                {
+                    behaviour_dns += 
+                    JSON.stringify(data.behaviour_dns[i].ip) +" : " + JSON.stringify(data.behaviour_dns[i].hostname) +"<br>" ;
+                }
+                
+                for (i = 0; i < data.behaviour_http.length; i++)
+                {
+                    behaviour_http += JSON.stringify(data.behaviour_http[i].url) +"<br>";
+                }
+                
+                for (var urls in data.ITW_urls) 
+                {
+                    url += urls + " : " + data.ITW_urls[urls] + "<br>";
+                }
+                
+                for (var debugs in data.pe_debug['codeview']) 
+                {
+                    debug_name = debugs['name'] + "<br>";
+                    debug_signature = debugs['signature'] + "<br>";
+                }
+                
+                for (i = 0; i < data.tags.length; i++)
+                {
+                    tags += data.tags[i] + ", ";
+                }
             }
-            
-            for (i = 0; i < data.behaviour_http.length; i++)
+            catch(err)
             {
-                behaviour_http += JSON.stringify(data.behaviour_http[i].url) +"<br>";
-            }
-            
-            for (var urls in data.ITW_urls) 
-            {
-                url += urls + " : " + data.ITW_urls[urls] + "<br>";
+                console.log(err.message);
             }
             
             sample_info = 
-            "<b>Authentihash</b>: " + data.authentihash + "<br>" +
-            "<b>Import Hash</b>: " + data.imphash + "<br>" +
-            "<b>Submission Names</b>: " + data.submission_names + "<br><br>" +
-            "<b>Timestamp</b>: " + data.timestamp + "<br><br>" +
-            "<b>Packer</b>: " + data.unpacker + "<br>" +
+            "<table class='table table-bordered table-striped table-condensed'>" +
+                "<tbody>" +
+                  "<tr><th>Authentihash</th><td>" + data.authentihash + "</td></tr>" +
+                  "<tr><th>Import Hash</th><td><a href='https://www.virustotal.com/intelligence/search/?query=imphash:\""+ data.imphash +"\"'>" + data.imphash + "</a></td></tr>" +
+                  "<tr><th>SSDeep</th><td><a href='https://www.virustotal.com/intelligence/search/?query=ssdeep:%22"+ data.ssdeep +" 40%22'>VT Link</a></td></tr>" +
+                  "<tr><th>Submission Names</th><td>" + data.submission_names + "</td></tr>" +
+                  "<tr><th>Time Submitted</th><td>" + data.times_submitted + "</td></tr>" +
+                  "<tr><th>Timestamp</th><td>" + data.timestamp + "</td></tr>" +
+                  "<tr><th>Packer</th><td>" + data.unpacker + "</td></tr>" +
+                  "<tr><th>Magic</th><td>" + data.magic + "</td></tr>" +
+                  "<tr><th>Tags</th><td>" + tags + "</td></tr>" +
+                "</tbody>" +
+              "</table>" +
+              
+            "<span class='label label-primary'>SigCheck</span>" +
+              "<table class='table table-bordered table-striped table-condensed'>" +
+                "<tbody>" +
+                  "<tr><th>Publishers</th><td>" + data.sigcheck_pub + "</td></tr>" +
+                  "<tr><th>Verified</th><td>" + data.sigcheck_verified + "</td></tr>" +
+                  "<tr><th>Date</th><td>" + data.sigcheck_date + "</td></tr>" +
+                  "<tr><th>Signers</th><td>" + data.sigcheck_signers + "</td></tr>" +
+                "</tbody>" +
+              "</table>" +
+              
+            "<span class='label label-primary'>TRID</span>" +
+              "<table class='table table-bordered table-striped table-condensed'>" +
+                "<tbody>" +
+                  "<tr><td>" + trid + "</td></tr>" +
+                "</tbody>" +
+              "</table>" +
+              
+              "<span class='label label-primary'>PE Debug</span>" +
+              "<table class='table table-bordered table-striped table-condensed'>" +
+                "<tbody>" +
+                  "<tr><td>Name</td><td>"+debug_name+"</tr>" +
+                  "<tr><td>Signature</td><td>"+debug_signature+"</tr>" +
+                "</tbody>" +
+              "</table>" +
             
-            "<b>Magic</b>: " + data.magic + "<br><br>" +
+            "<span class='label label-primary'>Exif</span>" +
+              "<table class='table table-bordered table-striped table-condensed'>" +
+                "<tbody>" +
+                  "<tr><th>TimeStamp</th><td>" + data.exif_TimeStamp + "</td></tr>" +
+                  "<tr><th>Language</th><td>" + data.exif_LanguageCode + "</td></tr>" +
+                  "<tr><th>File Name</th><td>" + data.exif_OriginalFileName + "</td></tr>" +
+                  "<tr><th>Internal Name</th><td>" + data.exif_InternalName + "</td></tr>" +
+                  "<tr><th>Product Name</th><td>" + data.exif_ProductName + "</td></tr>" +
+                  "<tr><th>Company Name</th><td>" + data.exif_company + "</td></tr>" +
+                "</tbody>" +
+              "</table>" +
+              
+            "<span class='label label-primary'>Behaviour</span>" +
+              "<table class='table table-bordered table-striped table-condensed'>" +
+                "<tbody>" +
+                  "<tr><td>UDP</td><td>"+data.behaviour_upd+"</tr>" +
+                  "<tr><td>HTTP</td><td>"+behaviour_http+"</tr>" +
+                  "<tr><td>DNS</td><td>"+behaviour_dns+"</tr>" +
+                  "<tr><td>TCP</td><td>"+data.behaviour_tcp+"</tr>" +
+                "</tbody>" +
+              "</table>" +
             
-            "<b>SigCheck</b>: <br>" + 
-            "Publishers - " + data.sigcheck_pub + "<br>" +
-            "Verified - " + data.sigcheck_verified + "<br>" +
-            "Date - " + data.sigcheck_date + "<br>" +
-            "Signers - " + data.sigcheck_signers + "<br><br>" +
-            
-            "<b>TRID</b>: <br>" + trid + "<br><br>" +
-            
-            "<b>Exif</b>: <br>" + 
-            "TimeStamp - " + data.exif_TimeStamp + "<br>" +
-            "Language - " + data.exif_LanguageCode + "<br>" +
-            "File Name - " + data.exif_OriginalFileName + "<br>" +
-            "Internal Name - " + data.exif_InternalName + "<br>" +
-            "Product Name - " + data.exif_ProductName + "<br>" +
-            "Company Name - " + data.exif_company + "<br><br>" +
-            
-            "<b>Behaviour</b>: <br>" + 
-            "UDP: <br> " + 
-            data.behaviour_upd + "<br>" +
-            "HTTP: <br>" +  
-            behaviour_http + "<br>" +
-            "DNS: <br>" + 
-            behaviour_dns + "<br>" +
-            "TCP: <br>" + 
-            data.behaviour_tcp + "<br>" +
-            
-            "<br>" +
-            "<b>ITW_urls</b>: " + url + "<br>";
+            "<span class='label label-primary'>ITW</span>" +
+              "<table class='table table-bordered table-striped table-condensed'>" +
+                "<tbody>" +
+                  "<tr><td>"+url+"</tr>" +
+                "</tbody>" +
+              "</table>";
             }
 
 
         $("#modal-title").html(title);
         $("#modal-bod").html(
-            "<h2>Alert Details</h2>" +
             alert_info +
-            "<hr>" +
-            "<h2>Sample Details</h2>" +
             sample_info
             );
 
@@ -453,7 +505,7 @@ $cursor = $collection->find($archQuery);
   <th data-field="crits" data-sortable="true">CRITS</th>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="av" data-sortable="true">AV</th>
-  <th data-field="McAfee" data-sortable="true">McAfee</th>
+  <th data-field="av_vendor" data-sortable="true"><?echo $av_vendor;?></th>
   <th data-field="size" data-sortable="true">Size</th>
   <th data-field="Type" data-sortable="true">Type</th>
   <th data-field="id" data-sortable="false">Action</th>
@@ -465,7 +517,13 @@ $int = 1;
 
 foreach ($cursor as $array)
 {
-    if($array['archive'] == true){print "<tr class='success' id='tr".number_format($array['id'],0,'.','')."'>";}else{print "<tr id='tr".number_format($array['id'],0,'.','')."'>";}
+    if (isset($array['archive'])){
+        if($array['archive'] == true){print "<tr class='success' id='tr".number_format($array['id'],0,'.','')."'>";}else{print "<tr id='tr".number_format($array['id'],0,'.','')."'>";}
+    }
+    else
+    {
+        print "<tr id='tr".number_format($array['id'],0,'.','')."'>";
+    }
     print "<td><input type='checkbox' name='selected' id='".$array['md5']."' value='".number_format($array['id'],0,'.','')."'/></td>";
     print "<td><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>"; 
     print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>"; 
@@ -473,9 +531,16 @@ foreach ($cursor as $array)
     print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>"; 
     
     # Crits check
-    if($array['crits'] == "true")
+    if (isset($array['crits']))
     {
-        print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>"; 
+        if($array['crits'] == "true")
+        {
+            print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>"; 
+        }
+        else
+        {
+            print "<td>N/A</td>";
+        }
     }
     else
     {
@@ -493,7 +558,7 @@ foreach ($cursor as $array)
         print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='AV Results' onclick=\"launch_av_modal(".number_format($array['id'],0,'.','').",'AV Summary')\">".$array['positives']."/".$array['total']."</button></td>";  
     }            
 
-    print "<td>".$array['scans']['McAfee']."</td>";
+    print "<td>".$array['scans'][$av_vendor]."</td>";
     print "<td>".$array['size']."</td>";
     print "<td>".$array['type']."</td>";
     print "<td>
@@ -531,7 +596,7 @@ foreach ($cursor as $array)
     </div>
     <!-- Dynamic Modal content-->
 <footer>
-<p>&copy; r3comp1le 2015</p>
+<p><center>&copy; r3comp1le 2016</center></p>
 </footer>
 </div> <!-- /container -->
 </body>

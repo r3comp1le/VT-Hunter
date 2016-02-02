@@ -96,13 +96,17 @@ foreach ($thejson['notifications'] as $array)
             if (isset($thejson_vt_search['submission_names'])){$vt_submission_names = $thejson_vt_search['submission_names'];}else{$vt_submission_names = "";}
             
             if (isset($thejson_vt_search['additional_info']['trid'])){$vt_trid = $thejson_vt_search['additional_info']['trid'];}else{$vt_trid = "";}
+            if (isset($thejson_vt_search['additional_info']['pe-debug'])){$vt_pe_debug = $thejson_vt_search['additional_info']['pe-debug'];}else{$vt_pe_debug = "";}
             if (isset($thejson_vt_search['additional_info']['pe-imphash'])){$vt_imphash = $thejson_vt_search['additional_info']['pe-imphash'];}else{$vt_imphash = "";}
             if (isset($thejson_vt_search['additional_info']['magic'])){$vt_magic = $thejson_vt_search['additional_info']['magic'];}else{$vt_magic = "";}
             
             if (isset($thejson_vt_search['additional_info']['pe-timestamp'])){$vt_timestamp = gmdate("Y-m-d\TH:i:s\Z",$thejson_vt_search['additional_info']['pe-timestamp']);}else{$vt_timestamp = "";}
             if (isset($thejson_vt_search['additional_info']['f-prot-unpacker'])){$vt_unpacker = $thejson_vt_search['additional_info']['f-prot-unpacker'];}else{$vt_unpacker = "";}
             if (isset($thejson_vt_search['authentihash'])){$vt_authentihash = $thejson_vt_search['authentihash'];}else{$vt_authentihash = "";}
+            if (isset($thejson_vt_search['resource'])){$vt_resource = $thejson_vt_search['resource'];}else{$vt_resource = "";}
+            if (isset($thejson_vt_search['ssdeep'])){$vt_ssdeep = $thejson_vt_search['ssdeep'];}else{$vt_ssdeep = "";}
             if (isset($thejson_vt_search['ITW_urls'])){$vt_ITW_urls = $thejson_vt_search['ITW_urls'];}else{$vt_ITW_urls = "";}
+            if (isset($thejson_vt_search['tags'])){$vt_tags = $thejson_vt_search['tags'];}else{$vt_tags = "";}
             
             if (isset($thejson_vt_search['additional_info']['behaviour-v1']['network']['udp'])){$vt_behaviour_udp = $thejson_vt_search['additional_info']['behaviour-v1']['network']['udp'];}else{$vt_behaviour_udp = "";}
             if (isset($thejson_vt_search['additional_info']['behaviour-v1']['network']['http'])){$vt_behaviour_http = $thejson_vt_search['additional_info']['behaviour-v1']['network']['http'];}else{$vt_behaviour_http = "";}
@@ -136,6 +140,9 @@ foreach ($thejson['notifications'] as $array)
             "timestamp" => $vt_timestamp,
             "unpacker" => $vt_unpacker,
             "authentihash" => $vt_authentihash,
+            "pe_debug" =>$vt_pe_debug,
+            "resource" => $vt_resource,
+            "ssdeep" => $vt_ssdeep,
             "behaviour_upd" => $vt_behaviour_udp,
             "behaviour_http" => $vt_behaviour_http,
             "behaviour_dns" => $vt_behaviour_dns,
@@ -147,6 +154,7 @@ foreach ($thejson['notifications'] as $array)
             "exif_TimeStamp" => $vt_exif_TimeStamp,
             "exif_InternalName" => $vt_exif_InternalName,
             "exif_ProductName" => $vt_exif_ProductName,
+            "tags" => $vt_tags,
             );
             $sample_details = array_merge($sample_details, $sample_search_info); 
         }

@@ -18,5 +18,13 @@ $vt_mal_key = "123456789";
 $vt_search = "false"; 
 $vt_search_key = "0987654321";
 
-$delete_alerts = "false"
+$delete_alerts = "false";
+
+#Version
+$version = "2.0";
+$updated = "Feb 2 2015";
+
+#AV
+$av_vendor = "McAfee";
+
 ?>
