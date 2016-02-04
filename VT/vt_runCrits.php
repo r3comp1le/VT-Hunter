@@ -1,5 +1,5 @@
 <?
-require('VT/config.php');
+require('config.php');
 
 $counter = 0;
 $m = new MongoClient();
