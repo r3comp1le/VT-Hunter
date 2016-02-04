@@ -5,7 +5,7 @@ $mongo_collection = "samples";
 
 #Crits Connections
 $crits_on = "false";
-$crits_url = "https://myCrits.com";
+$crits_url = "https://myCrits.com/crits"; #Until /api, https://crits.com/crits/api/v1
 $crits_api_key = "123456789";
 $crits_user = "username";
 
