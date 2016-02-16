@@ -238,6 +238,17 @@ function launch_av_modal(id,title){
     });
 }
 
+function conn_test(source){
+    $.ajax({
+        type: "POST",
+        url: "VT/conn_test.php",
+        data: {source:source},
+        success: function(data){
+            alert(data);
+        },
+    });
+}
+
 function downloadFunc() {
     var md5s = []
     $("input:checkbox[name=selected]:checked").each(function(){
@@ -351,12 +362,7 @@ function removeRowA(trid) {
 }
 function showlog(title) {
     jQuery.get('VT/vt.log', function(data) {
-        logz = data.replace(/\n/g, "<br>\n");
-        var lines = logz.split("\n");
-        start = (lines.length - 4);
-        end = lines.length;
-        var log = lines.slice(start, end)
-        $("#modal-bod").html(log)
+        $("#modal-bod").html(data)
         $("#modal-title").html(title);
         $('#scrap_mod').modal('show');
     });
@@ -405,19 +411,24 @@ function runCrits(title) {
 function showConfig(title) {
     response = "<?
     #Mongo
+    print "<b>Mongo Server</b>: " . $mongo_server_host . "<br>";
+    print "<b>Mongo Port</b>: " . $mongo_server_port . "<br>";
     print "<b>Mongo DB</b>: " . $mongo_db . "<br>";
     print "<b>Mongo Collection</b>: " . $mongo_collection . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;mongo&#39;)'>Test Connection</button><br>";
     print "<br>";
 
     #Crits Connections
     print "<b>Crits Integration</b>: " . $crits_on . "<br>";
     print "<b>Crits URL</b>: " . $crits_url . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;crits&#39;)'>Test Connection</button><br>";
     print "<br>";
     
     #VT
     print "<b>VT Alerts</b>: " . $vt_mal . "<br>";
     print "<b>VT Search</b>: " . $vt_search . "<br>";
     print "<b>Delete Alerts from VT</b>: " . $delete_alerts . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;vt&#39;)'>Test Connection</button><br>";
     print "<br>";
     
     ?>";
@@ -463,7 +474,14 @@ catch ( MongoConnectionException $e )
 }
 
 #Chec Archived Option
-if($_GET['archive'] == 'true'){$archQuery = array('archive' => 'true');}else{$archQuery = array('archive' => null);}
+if(isset($_GET['archive']) && $_GET['archive'] == 'true')
+{
+    $archQuery = array('archive' => 'true');
+}
+else
+{
+    $archQuery = array('archive' => null);
+}
 $cursor = $collection->find($archQuery);
 ?>
 <div class="btn-group">

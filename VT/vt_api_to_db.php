@@ -2,9 +2,11 @@
 require('config.php');
 
 # Log file
-$log = fopen("vt.log", "a");
+$filesize = filesize("vt.log");
+if($filesize < 1000){$log = fopen("vt.log", "a");}
+else{$log = fopen("vt.log", "w");}
 $date = date("F j, Y, g:i a");
-fwrite($log, "<b>".$date."</b>\n");
+fwrite($log, "<b>".$date."</b><br>\n");
 
 # Get the alert feed
 $url_vt_mal = "https://www.virustotal.com/intelligence/hunting/notifications-feed/?key=".$vt_mal_key;
@@ -208,8 +210,8 @@ foreach ($thejson['notifications'] as $array)
 echo "Samples Added: <span class='label label-primary'>" . $int_add . "</span><br>";
 echo "VT Alerts Deleted: <span class='label label-danger'>"  . $int_del . "</span><br>";
 
-fwrite($log, "Samples Added: <span class='label label-primary'>" . $int_add . "</span>\n");
-fwrite($log, "VT Alerts Deleted: <span class='label label-danger'>" . $int_del . "</span>\n\n");
+fwrite($log, "Samples Added: <span class='label label-primary'>" . $int_add . "</span><br>\n");
+fwrite($log, "VT Alerts Deleted: <span class='label label-danger'>" . $int_del . "</span><br><br>\n\n");
 fclose($log);
 
 ?>
