@@ -20,7 +20,7 @@ $result = file_get_contents($url_vt_mal, false, $context);
 $thejson = json_decode($result, true);
 
 # Mongo connection
-$m = new MongoClient();
+$m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
 $db = $m->selectDB($mongo_db);
 $collection = new MongoCollection($db, $mongo_collection);
 $int_del = 0;

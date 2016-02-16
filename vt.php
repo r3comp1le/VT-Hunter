@@ -452,7 +452,7 @@ jQuery(document).ready(function($){
 <?
 try
 {
-    $m = new MongoClient();
+    $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
     $db = $m->selectDB($mongo_db);
     $collection = new MongoCollection($db, $mongo_collection);
 }

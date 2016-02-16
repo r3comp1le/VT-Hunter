@@ -1,5 +1,7 @@
 <?
 #Mongo Config
+$mongo_server_host = "127.0.0.1";
+$mongo_server_port = "27017";
 $mongo_db = "vt";
 $mongo_collection = "samples";
 
