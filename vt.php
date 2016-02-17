@@ -250,19 +250,30 @@ function conn_test(source){
 }
 
 function downloadFunc() {
+    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    $("#load-bod").html(resp)
+    $('#load_mod').modal('show');
+    
     var md5s = []
     $("input:checkbox[name=selected]:checked").each(function(){
         md5 = this.id;
         md5s.push(md5);
-        alert(md5);
-        //console.log(md5);
     });
+    thelink = '';
     
-    /*$.post( "vtdown.php", { "md5s[]": md5s },function( data )
-    {
-        console.log(data);
+    $.ajax({
+        type: "POST",
+        url: "VT/vt_down.php",
+        data : {md5Array : md5s},
+        async: false,
+        success: function(data){
+            response = data;
+            $('#load_mod').modal('hide');
+            $("#modal-bod").html(response);
+            $("#modal-title").html('Download Zip');
+            $('#scrap_mod').modal('show');
+        },
     });
-    */
 }
 
 function confirmDel(title) {
@@ -493,7 +504,6 @@ $cursor = $collection->find($archQuery);
   </button>
   <ul class="dropdown-menu">
     <li onclick="downloadFunc('Download')"><a>MD5</a></li>
-    <li onclick="downloadFunc('Download')"><a>SHA</a></li>
   </ul>
 </div>
 
