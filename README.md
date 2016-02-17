@@ -38,8 +38,6 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   ```
   - Make vt.log writtable
 
-### FYI
-  - Still working on Download Feature
 
 ### Config Settings
   - Mongo Settings (database and collection)
