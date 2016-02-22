@@ -1,8 +1,6 @@
 # VT Hunter
 ![alt tag](http://i.imgur.com/3j0azyY.jpg)
-![alt tag](http://i.imgur.com/5ZwF1w1.jpg)
-![alt tag](http://i.imgur.com/lw2Rqgd.jpg)
-![alt tag](http://i.imgur.com/qR1veRk.jpg)
+[![Video](https://blog.majestic.com/wp-content/uploads/2010/10/Video-Icon-crop.png)](https://streamable.com/v83x)
 
 ### OnGoing Project
 
