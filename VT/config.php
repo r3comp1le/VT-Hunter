@@ -23,8 +23,8 @@ $vt_search_key = "0987654321";
 $delete_alerts = "false";
 
 #Version
-$version = "2.0";
-$updated = "Feb 2 2015";
+$version = "2.2";
+$updated = "Feb 17 2015";
 
 #AV
 $av_vendor = "McAfee";
