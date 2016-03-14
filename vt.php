@@ -9,7 +9,7 @@ require('VT/config.php');
     <title>VT Hunter</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
-    
+
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
@@ -28,7 +28,7 @@ require('VT/config.php');
     mark {
     background-color: red;
     color: black;
-    } 
+    }
     .modal-header {
     padding:9px 15px;
     }
@@ -55,7 +55,7 @@ function launch_info_modal(id, title){
         url: "VT/vt_getcontent.php",
         data: {theId:id},
         success: function(data){
-            
+
             behaviour_dns = "";
             behaviour_http = "";
             url = "";
@@ -64,8 +64,8 @@ function launch_info_modal(id, title){
             debug_name = "";
             debug_signature = "";
             tags = "";
-            
-            alert_info = 
+
+            alert_info =
             "<span class='label label-primary'>Sample Details</span>" +
             "<table class='table table-bordered table-striped table-condensed'>" +
                 "<tbody>" +
@@ -78,33 +78,33 @@ function launch_info_modal(id, title){
                   "<tr><th>Size</th><td>" + data.size + "</td></tr>" +
                 "</tbody>" +
               "</table>";
-            
+
             if(typeof data.sample_info !== 'undefined')
             {
             trid = data.trid.replace(/\n/g, '<br>');
             try {
                 for (i = 0; i < data.behaviour_dns.length; i++)
                 {
-                    behaviour_dns += 
+                    behaviour_dns +=
                     JSON.stringify(data.behaviour_dns[i].ip) +" : " + JSON.stringify(data.behaviour_dns[i].hostname) +"<br>" ;
                 }
-                
+
                 for (i = 0; i < data.behaviour_http.length; i++)
                 {
                     behaviour_http += JSON.stringify(data.behaviour_http[i].url) +"<br>";
                 }
-                
-                for (var urls in data.ITW_urls) 
+
+                for (var urls in data.ITW_urls)
                 {
                     url += urls + " : " + data.ITW_urls[urls] + "<br>";
                 }
-                
-                for (var debugs in data.pe_debug['codeview']) 
+
+                for (var debugs in data.pe_debug['codeview'])
                 {
                     debug_name = debugs['name'] + "<br>";
                     debug_signature = debugs['signature'] + "<br>";
                 }
-                
+
                 for (i = 0; i < data.tags.length; i++)
                 {
                     tags += data.tags[i] + ", ";
@@ -114,8 +114,8 @@ function launch_info_modal(id, title){
             {
                 console.log(err.message);
             }
-            
-            sample_info = 
+
+            sample_info =
             "<table class='table table-bordered table-striped table-condensed'>" +
                 "<tbody>" +
                   "<tr><th>Authentihash</th><td>" + data.authentihash + "</td></tr>" +
@@ -129,7 +129,7 @@ function launch_info_modal(id, title){
                   "<tr><th>Tags</th><td>" + tags + "</td></tr>" +
                 "</tbody>" +
               "</table>" +
-              
+
             "<span class='label label-primary'>SigCheck</span>" +
               "<table class='table table-bordered table-striped table-condensed'>" +
                 "<tbody>" +
@@ -139,14 +139,14 @@ function launch_info_modal(id, title){
                   "<tr><th>Signers</th><td>" + data.sigcheck_signers + "</td></tr>" +
                 "</tbody>" +
               "</table>" +
-              
+
             "<span class='label label-primary'>TRID</span>" +
               "<table class='table table-bordered table-striped table-condensed'>" +
                 "<tbody>" +
                   "<tr><td>" + trid + "</td></tr>" +
                 "</tbody>" +
               "</table>" +
-              
+
               "<span class='label label-primary'>PE Debug</span>" +
               "<table class='table table-bordered table-striped table-condensed'>" +
                 "<tbody>" +
@@ -154,7 +154,7 @@ function launch_info_modal(id, title){
                   "<tr><td>Signature</td><td>"+debug_signature+"</tr>" +
                 "</tbody>" +
               "</table>" +
-            
+
             "<span class='label label-primary'>Exif</span>" +
               "<table class='table table-bordered table-striped table-condensed'>" +
                 "<tbody>" +
@@ -166,7 +166,7 @@ function launch_info_modal(id, title){
                   "<tr><th>Company Name</th><td>" + data.exif_company + "</td></tr>" +
                 "</tbody>" +
               "</table>" +
-              
+
             "<span class='label label-primary'>Behaviour</span>" +
               "<table class='table table-bordered table-striped table-condensed'>" +
                 "<tbody>" +
@@ -176,7 +176,7 @@ function launch_info_modal(id, title){
                   "<tr><td>TCP</td><td>"+data.behaviour_tcp+"</tr>" +
                 "</tbody>" +
               "</table>" +
-            
+
             "<span class='label label-primary'>ITW</span>" +
               "<table class='table table-bordered table-striped table-condensed'>" +
                 "<tbody>" +
@@ -203,12 +203,12 @@ function launch_yara_modal(id, title){
         url: "VT/vt_getcontent.php",
         data: {theId:id},
         success: function(data){
-          
+
         yara = data.match;
         yara0 = yara.replace(/\n/g, "<br>");
         yara1 = yara0.replace(/\*begin_highlight*/g, "<mark>");
         yara2 = yara1.replace(/\*end_highlight*/g, "</mark>");
-        
+
         $("#modal-bod").html(yara2);
         $("#modal-title").html(title + ' (' + data.date + ')');
         $('#scrap_mod').modal('show');
@@ -225,12 +225,12 @@ function launch_av_modal(id,title){
         success: function(data){
 
         var av = "";
-        
+
         for (x in data.scans)
         {
             if(data.scans[x] != null){av += "<b>"+x+"</b>" + ":" + data.scans[x] + "<br>";}
         }
-        
+
         $("#modal-bod").html(av);
         $("#modal-title").html(title);
         $('#scrap_mod').modal('show');
@@ -253,14 +253,14 @@ function downloadFunc() {
     resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
     $("#load-bod").html(resp)
     $('#load_mod').modal('show');
-    
+
     var md5s = []
     $("input:checkbox[name=selected]:checked").each(function(){
         md5 = this.id;
         md5s.push(md5);
     });
     thelink = '';
-    
+
     $.ajax({
         type: "POST",
         url: "VT/vt_down.php",
@@ -281,7 +281,7 @@ function confirmDel(title) {
     $("#modal-bod").html(response);
     $("#modal-title").html(title);
     $('#scrap_mod').modal('show');
-}   
+}
 
 function deleteFunc() {
     $("input:checkbox[name=selected]:checked").each(function(){
@@ -302,7 +302,7 @@ function delFunc(id) {
         data: {delId:id},
         success: function(data){
             if(data.trim() == "200")
-            {      
+            {
                 removeRow(trid);
                 //console.log("Deleted");
             }
@@ -325,7 +325,7 @@ function archFunc(id) {
         data: {archId:id},
         success: function(data){
             if(data.trim() == "archived")
-            {      
+            {
                 removeRowA(trid);
                 console.log("Archived");
             }
@@ -347,7 +347,7 @@ function UnarchFunc(id) {
         data: {archId:id},
         success: function(data){
             if(data.trim() == "unarchived")
-            {      
+            {
                 removeRow(trid);
                 console.log("UnArchived");
             }
@@ -377,11 +377,11 @@ function showlog(title) {
         $("#modal-title").html(title);
         $('#scrap_mod').modal('show');
     });
-    
+
 }
 
 function reloadData(title) {
-    
+
     resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
     $("#load-bod").html(resp)
     $('#load_mod').modal('show');
@@ -397,10 +397,10 @@ function reloadData(title) {
             $('#scrap_mod').modal('show');
         },
     });
-    
+
 }
 function runCrits(title) {
-    
+
     resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
     $("#load-bod").html(resp)
     $('#load_mod').modal('show');
@@ -417,9 +417,9 @@ function runCrits(title) {
         },
 
     });
-    
+
 }
-    
+
 function showConfig(title) {
     response = "<?
     #Mongo
@@ -435,14 +435,14 @@ function showConfig(title) {
     print "<b>Crits URL</b>: " . $crits_url . "<br>";
     print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;crits&#39;)'>Test Connection</button><br>";
     print "<br>";
-    
+
     #VT
     print "<b>VT Alerts</b>: " . $vt_mal . "<br>";
     print "<b>VT Search</b>: " . $vt_search . "<br>";
     print "<b>Delete Alerts from VT</b>: " . $delete_alerts . "<br>";
     print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;vt&#39;)'>Test Connection</button><br>";
     print "<br>";
-    
+
     ?>";
     $("#modal-bod").html(response);
     $("#modal-title").html(title);
@@ -457,7 +457,11 @@ jQuery(document).ready(function($){
     $('[data-toggle="tooltip"]').tooltip();
 });
 
-
+function idSorter(a,b){
+    if (a.id < b.id) return -1;
+    if (a.id > b.id) return 1;
+    return 0
+}
 </script>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -495,6 +499,7 @@ else
     $archQuery = array('archive' => null);
 }
 $cursor = $collection->find($archQuery);
+$cursor->sort(array("date" => -1));
 ?>
 <div class="btn-group">
 <button class="btn btn-info" type="button">Alerts <span class="badge"><?print $cursor->count();?></span></button>
@@ -527,7 +532,7 @@ $cursor = $collection->find($archQuery);
 <thead>
 <tr>
   <th data-field="check" data-sortable="false"><input type="checkbox" onClick="toggle(this)"/> All<br/></th>
-  <th data-field="num" data-sortable="false">Details</th>
+  <th data-field="num" data-sortable="true" data-sorter="idSorter" data-sort-name="_num_data">Details</th>
   <th data-field="set" data-sortable="true">Rule Set</th>
   <th data-field="rule" data-sortable="true">Rule</th>
   <th data-field="md5" data-sortable="true">MD5</th>
@@ -536,7 +541,7 @@ $cursor = $collection->find($archQuery);
     print "<th data-field='crits' data-sortable='true'>CRITS</th>";
   }?>
   <th data-field="seen" data-sortable="true">First Seen</th>
-  <th data-field="av" data-sortable="true">AV</th>
+  <th data-field="av" data-sortable="true" data-sorter="idSorter" data-sort-name="_av_data">AV</th>
   <th data-field="av_vendor" data-sortable="true"><?echo $av_vendor;?></th>
   <th data-field="size" data-sortable="true">Size</th>
   <th data-field="Type" data-sortable="true">Type</th>
@@ -557,11 +562,11 @@ foreach ($cursor as $array)
         print "<tr id='tr".number_format($array['id'],0,'.','')."'>";
     }
     print "<td><input type='checkbox' name='selected' id='".$array['md5']."' value='".number_format($array['id'],0,'.','')."'/></td>";
-    print "<td><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>"; 
-    print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>"; 
-    print "<td>".$array['subject']."</td>"; 
-    print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>"; 
-    
+    print "<td data-id='".$int."'><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>";
+    print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>";
+    print "<td>".$array['subject']."</td>";
+    print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>";
+
     # Crits check
     if ($crits_on == "true")
     {
@@ -569,7 +574,7 @@ foreach ($cursor as $array)
       {
           if($array['crits'] == "true")
           {
-              print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>"; 
+              print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>";
           }
           else
           {
@@ -581,17 +586,17 @@ foreach ($cursor as $array)
           print "<td>N/A</td>";
       }
     }
-    
+
     #AV Logic
-    print "<td>".$array['first_seen']."</td>"; 
+    print "<td>".$array['first_seen']."</td>";
     if($array['positives'] == 0)
     {
-        print "<td><button type='button' class='btn btn-danger btn-xs'>".$array['positives']."/".$array['total']."</button>";    
+        print "<td data-id='" . $array['positives'] . "'><button type='button' class='btn btn-danger btn-xs'>".$array['positives']."/".$array['total']."</button></td>";
     }
     else
     {
-        print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='AV Results' onclick=\"launch_av_modal(".number_format($array['id'],0,'.','').",'AV Summary')\">".$array['positives']."/".$array['total']."</button></td>";  
-    }            
+        print "<td data-id='" . $array['positives'] . "'><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='AV Results' onclick=\"launch_av_modal(".number_format($array['id'],0,'.','').",'AV Summary')\">".$array['positives']."/".$array['total']."</button></td>";
+    }
 
     print "<td>".$array['scans'][$av_vendor]."</td>";
     print "<td>".$array['size']."</td>";
@@ -606,7 +611,7 @@ foreach ($cursor as $array)
 }
 ?>
     </tbody>
-    </table> 
+    </table>
       <!-- page end-->
 
     <!-- Dynamic Modal content-->
