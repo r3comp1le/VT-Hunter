@@ -18,9 +18,19 @@
 - Green highlight for archive action
 - Refresh button on Modals
 
-Next...
-- Choose AV option in config
-- Select All for Archiving
-- 3rd catagory "False Positive"
-- Add notes
-- Downloading
+2.2.16
+- About Page
+- Reduce errors on crits and archive check
+- AV config option
+- Ssample details redone
+
+2.16.16
+- Mongo config added
+
+2.17.17
+- Download Feature
+
+3.14
+- Stats on About page
+- Sort on AV and ID
+- Better Install Instructions
