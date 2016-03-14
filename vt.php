@@ -10,7 +10,7 @@ require('VT/config.php');
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
 
-    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
 </head>
@@ -498,6 +498,7 @@ else
     $archQuery = array('archive' => null);
 }
 $cursor = $collection->find($archQuery);
+$cursor->sort(array("date" => -1));
 ?>
 <div class="btn-group">
 <button class="btn btn-info" type="button">Alerts <span class="badge"><?print $cursor->count();?></span></button>
@@ -537,7 +538,7 @@ $cursor = $collection->find($archQuery);
   <th data-field="crits" data-sortable="true">CRITS</th>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="av" data-sortable="true" data-sorter="idSorter" data-sort-name="_av_data">AV</th>
-v_vendor" data-sortable="true"><?echo $av_vendor;?></th>
+  <th data-field="av_vendor" data-sortable="true"><?echo $av_vendor;?></th>
   <th data-field="size" data-sortable="true">Size</th>
   <th data-field="Type" data-sortable="true">Type</th>
   <th data-field="id" data-sortable="false">Action</th>
@@ -557,7 +558,7 @@ foreach ($cursor as $array)
         print "<tr id='tr".number_format($array['id'],0,'.','')."'>";
     }
     print "<td><input type='checkbox' name='selected' id='".$array['md5']."' value='".number_format($array['id'],0,'.','')."'/></td>";
-    print "<td><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>";
+    print "<td data-id='" . $int . "'><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>";
     print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>";
     print "<td>".$array['subject']."</td>";
     print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>";
