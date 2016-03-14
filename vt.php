@@ -10,7 +10,7 @@ require('VT/config.php');
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
     
-    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
 </head>
@@ -415,6 +415,7 @@ function runCrits(title) {
             $("#modal-title").html(title);
             $('#scrap_mod').modal('show');
         },
+
     });
     
 }
@@ -530,7 +531,10 @@ $cursor = $collection->find($archQuery);
   <th data-field="set" data-sortable="true">Rule Set</th>
   <th data-field="rule" data-sortable="true">Rule</th>
   <th data-field="md5" data-sortable="true">MD5</th>
-  <th data-field="crits" data-sortable="true">CRITS</th>
+  <? if($crits_on == "true")
+  {
+    print "<th data-field='crits' data-sortable='true'>CRITS</th>";
+  }?>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="av" data-sortable="true">AV</th>
   <th data-field="av_vendor" data-sortable="true"><?echo $av_vendor;?></th>
@@ -559,20 +563,23 @@ foreach ($cursor as $array)
     print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>"; 
     
     # Crits check
-    if (isset($array['crits']))
+    if ($crits_on == "true")
     {
-        if($array['crits'] == "true")
-        {
-            print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>"; 
-        }
-        else
-        {
-            print "<td>N/A</td>";
-        }
-    }
-    else
-    {
-        print "<td>N/A</td>";
+      if (isset($array['crits']))
+      {
+          if($array['crits'] == "true")
+          {
+              print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>"; 
+          }
+          else
+          {
+              print "<td>N/A</td>";
+          }
+      }
+      else
+      {
+          print "<td>N/A</td>";
+      }
     }
     
     #AV Logic
