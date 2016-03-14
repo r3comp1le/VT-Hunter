@@ -25,6 +25,7 @@ $thejson = json_decode($result, true);
 $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
 $db = $m->selectDB($mongo_db);
 $collection = new MongoCollection($db, $mongo_collection);
+$stats = new MongoCollection($db, $mongo_collection_stats);
 $int_del = 0;
 $int_add = 0;
 
@@ -46,6 +47,12 @@ foreach ($thejson['notifications'] as $array)
     $vt_subject = $array['subject']; 
     $vt_total = $array['total']; 
     $vt_type = $array['type']; 
+	
+	# Add to stats
+	$criteria = array('rule' => $vt_ruleset_name);
+	$doc = $stats->findOne($criteria);
+	if(empty($doc)){$stats->insert(array("count" => 1,"rule" => $vt_ruleset_name));}
+	else{$stats->update(array('rule' => $vt_ruleset_name), array('$inc' => array('count' => 1)));}
 
     # Check if ID exist in DB
     $id_check = array('id' => $vt_id);

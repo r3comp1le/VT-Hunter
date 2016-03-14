@@ -4,6 +4,7 @@ $mongo_server_host = "127.0.0.1";
 $mongo_server_port = "27017";
 $mongo_db = "vt";
 $mongo_collection = "samples";
+$mongo_collection_stats = "stats";
 
 #Crits Connections
 $crits_on = "false";
@@ -23,8 +24,8 @@ $vt_search_key = "0987654321";
 $delete_alerts = "false";
 
 #Version
-$version = "2.2";
-$updated = "Feb 17 2015";
+$version = "2.3";
+$updated = "Mar 14 2016";
 
 #AV
 $av_vendor = "McAfee";
