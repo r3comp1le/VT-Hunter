@@ -18,16 +18,20 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   - VirusTotal Intelligence API
   - VirusTotal Private Mass API (optional for more data)
   - Apache (apt-get install apache2)
-  - PHP (apt-get install php5 libapache2-mod-php5 php5-mcrypt)
+  - PHP (apt-get install php5 libapache2-mod-php5 php5-mcrypt php5-dev)
   - mongodb and mongo php
   ```sh
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+  echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+  apt-get update
+  apt-get install -y mongodb-org
+  service mongod status
   apt-get install php-pear
   ```
   
   - http://pecl.php.net/pack/mongo (Download tgz)
     
   ```sh
-  sudo apt-get install php5-dev
   phpize
   ./configure
   make
