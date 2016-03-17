@@ -12,13 +12,18 @@ $crits_url = "https://myCrits.com/crits"; #Until /api, https://crits.com/crits/a
 $crits_api_key = "123456789";
 $crits_user = "username";
 
-#VT 
+#MISP Connections
+$misp_on = "true";
+$misp_url = "https://myMISP.com"; #Until /api, https://crits.com/crits/api/v1
+$misp_api_key = "123456789";
+
+#VT
 #VirusTotal Intelligence API
-$vt_mal = "false";  
+$vt_mal = "false";
 $vt_mal_key = "123456789";
 
 #VirusTotal Private Mass API
-$vt_search = "false"; 
+$vt_search = "false";
 $vt_search_key = "0987654321";
 
 $delete_alerts = "false";
@@ -29,5 +34,9 @@ $updated = "Mar 14 2016";
 
 #AV
 $av_vendor = "McAfee";
+$av_multiple = true; # Use an array of predetermined AV
+$av_vendors = array("ESET-NOD32","TrendMicro","Sophos","McAfee","Kaspersky","Fortinet","Ikarus","Symantec","Qihoo-360")
 
+#Allow Manual Pull of VT, MISP, CRITS
+$manual_pull = false;
 ?>

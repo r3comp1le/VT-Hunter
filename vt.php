@@ -415,7 +415,26 @@ function runCrits(title) {
             $("#modal-title").html(title);
             $('#scrap_mod').modal('show');
         },
+    });
 
+}
+
+function runMISP(title) {
+
+    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    $("#load-bod").html(resp)
+    $('#load_mod').modal('show');
+
+    $.ajax({
+        type: "GET",
+        url: "VT/vt_runMISP.php",
+        async: false,
+        success: function(response){
+            $('#load_mod').modal('hide');
+            $("#modal-bod").html(response);
+            $("#modal-title").html(title);
+            $('#scrap_mod').modal('show');
+        },
     });
 
 }
@@ -434,6 +453,12 @@ function showConfig(title) {
     print "<b>Crits Integration</b>: " . $crits_on . "<br>";
     print "<b>Crits URL</b>: " . $crits_url . "<br>";
     print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;crits&#39;)'>Test Connection</button><br>";
+    print "<br>";
+
+    #MISP Connections
+    print "<b>MISP Integration</b>: " . $misp_on . "<br>";
+    print "<b>MISP URL</b>: " . $misp_url . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;misp&#39;)'>Test Connection</button><br>";
     print "<br>";
 
     #VT
@@ -521,11 +546,21 @@ $cursor->sort(array("date" => -1));
   <ul class="dropdown-menu">
     <li onclick="showlog('Log')"><a data-toggle='tooltip' data-placement='top' title='Show Log'>Log</a></li>
     <li onclick="showConfig('Config')"><a data-toggle='tooltip' data-placement='top' title='Show Config'>Config</a></li>
-    <li onclick="reloadData('VT Sync')"><a data-toggle='tooltip' data-placement='top' title='Get Alerts from VT'>Pull VT</a></li>
-    <li onclick="runCrits('Crits Lookup')"><a data-toggle='tooltip' data-placement='top' title='Crits Lookup'>Pull Crits</a></li>
+    <? if($manual_pull == "true")
+    {
+        print "<li onclick=\"reloadData('VT Sync')\"><a data-toggle='tooltip' data-placement='top' title='Get Alerts from VT'>Pull VT</a></li>";
+        if($crits_on == "true")
+        {
+            print "<li onclick=\"runCrits('Crits Lookup')\"><a data-toggle='tooltip' data-placement='top' title='Crits Lookup'>Pull Crits</a></li>";
+        }
+        if($misp_on == "true")
+        {
+            print "<li onclick=\"runMISP('MISP Lookup')\"><a data-toggle='tooltip' data-placement='top' title='Crits Lookup'>Pull MISP</a></li>";
+        }
+    }
+    ?>
   </ul>
 </div>
-
 
 <div id="filter-bar"> </div>
 <table id='mytable' data-toggle="table" data-classes="table table-hover table-condensed" data-striped="true" data-show-columns="true" data-search="true" data-pagination="true" data-page-size="20">
@@ -542,7 +577,14 @@ $cursor->sort(array("date" => -1));
   }?>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="av" data-sortable="true" data-sorter="idSorter" data-sort-name="_av_data">AV</th>
-  <th data-field="av_vendor" data-sortable="true"><?echo $av_vendor;?></th>
+  <? if($av_multiple == "true")
+  {
+      print "<th data-field="av_vendor" data-sortable="true">AV Description</th>"
+  }
+  else
+  {
+      print "<th data-field="av_vendor" data-sortable="true">" . $av_vendor . "</th>"
+  }?>
   <th data-field="size" data-sortable="true">Size</th>
   <th data-field="Type" data-sortable="true">Type</th>
   <th data-field="id" data-sortable="false">Action</th>
@@ -586,6 +628,25 @@ foreach ($cursor as $array)
           print "<td>N/A</td>";
       }
     }
+    # MISP check
+    if ($misp_on == "true")
+    {
+      if (isset($array['misp']))
+      {
+          if($array['misp'] == "true")
+          {
+              print "<td>".$array['misp_event']."</td>";
+          }
+          else
+          {
+              print "<td>N/A</td>";
+          }
+      }
+      else
+      {
+          print "<td>N/A</td>";
+      }
+    }
 
     #AV Logic
     print "<td>".$array['first_seen']."</td>";
@@ -597,8 +658,23 @@ foreach ($cursor as $array)
     {
         print "<td data-id='" . $array['positives'] . "'><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='AV Results' onclick=\"launch_av_modal(".number_format($array['id'],0,'.','').",'AV Summary')\">".$array['positives']."/".$array['total']."</button></td>";
     }
-
-    print "<td>".$array['scans'][$av_vendor]."</td>";
+    if($av_multiple == "true")
+    {
+        $found_vendor = false;
+        foreach ($av_vendors as $vendor){
+            if ($array['scans'][$vendor]!=""){
+                $found_vendor = true;
+                print "<td>" . $vendor . "<br>" . $array['scans'][$vendor] . "</td>";
+                break 1;
+            }
+        }
+        if ($found_vendor == false){
+            print "<td></td>";
+        }
+    }
+    else{
+        print "<td>".$array['scans'][$av_vendor]."</td>";
+    }
     print "<td>".$array['size']."</td>";
     print "<td>".$array['type']."</td>";
     print "<td>
