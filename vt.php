@@ -419,26 +419,6 @@ function runCrits(title) {
 
 }
 
-function runMISP(title) {
-
-    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
-    $("#load-bod").html(resp)
-    $('#load_mod').modal('show');
-
-    $.ajax({
-        type: "GET",
-        url: "VT/vt_runMISP.php",
-        async: false,
-        success: function(response){
-            $('#load_mod').modal('hide');
-            $("#modal-bod").html(response);
-            $("#modal-title").html(title);
-            $('#scrap_mod').modal('show');
-        },
-    });
-
-}
-
 function showConfig(title) {
     response = "<?
     #Mongo
@@ -453,12 +433,6 @@ function showConfig(title) {
     print "<b>Crits Integration</b>: " . $crits_on . "<br>";
     print "<b>Crits URL</b>: " . $crits_url . "<br>";
     print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;crits&#39;)'>Test Connection</button><br>";
-    print "<br>";
-
-    #MISP Connections
-    print "<b>MISP Integration</b>: " . $misp_on . "<br>";
-    print "<b>MISP URL</b>: " . $misp_url . "<br>";
-    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;misp&#39;)'>Test Connection</button><br>";
     print "<br>";
 
     #VT
@@ -553,10 +527,6 @@ $cursor->sort(array("date" => -1));
         {
             print "<li onclick=\"runCrits('Crits Lookup')\"><a data-toggle='tooltip' data-placement='top' title='Crits Lookup'>Pull Crits</a></li>";
         }
-        if($misp_on == "true")
-        {
-            print "<li onclick=\"runMISP('MISP Lookup')\"><a data-toggle='tooltip' data-placement='top' title='Crits Lookup'>Pull MISP</a></li>";
-        }
     }
     ?>
   </ul>
@@ -617,25 +587,6 @@ foreach ($cursor as $array)
           if($array['crits'] == "true")
           {
               print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>";
-          }
-          else
-          {
-              print "<td>N/A</td>";
-          }
-      }
-      else
-      {
-          print "<td>N/A</td>";
-      }
-    }
-    # MISP check
-    if ($misp_on == "true")
-    {
-      if (isset($array['misp']))
-      {
-          if($array['misp'] == "true")
-          {
-              print "<td>".$array['misp_event']."</td>";
           }
           else
           {

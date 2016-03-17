@@ -12,11 +12,6 @@ $crits_url = "https://myCrits.com/crits"; #Until /api, https://crits.com/crits/a
 $crits_api_key = "123456789";
 $crits_user = "username";
 
-#MISP Connections
-$misp_on = "true";
-$misp_url = "https://myMISP.com"; #Until /api, https://crits.com/crits/api/v1
-$misp_api_key = "123456789";
-
 #VT
 #VirusTotal Intelligence API
 $vt_mal = "false";
