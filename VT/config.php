@@ -29,9 +29,9 @@ $updated = "Mar 14 2016";
 
 #AV
 $av_vendor = "McAfee";
-$av_multiple = true; # Use an array of predetermined AV
-$av_vendors = array("ESET-NOD32","TrendMicro","Sophos","McAfee","Kaspersky","Fortinet","Ikarus","Symantec","Qihoo-360")
+$av_multiple = false; # Use an array of predetermined AV
+$av_vendors = array("ESET-NOD32","TrendMicro","Sophos","McAfee","Kaspersky","Fortinet","Ikarus","Symantec","Qihoo-360");
 
 #Allow Manual Pull of VT, MISP, CRITS
-$manual_pull = false;
+$manual_pull = true;
 ?>
