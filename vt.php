@@ -442,6 +442,9 @@ function showConfig(title) {
     print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;vt&#39;)'>Test Connection</button><br>";
     print "<br>";
 
+    print "<b>AV Multi</b>: " . $av_multiple . "<br>";
+    print "<b>Manual Pull</b>: " . $manual_pull . "<br>";
+
     ?>";
     $("#modal-bod").html(response);
     $("#modal-title").html(title);
