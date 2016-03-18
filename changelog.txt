@@ -27,10 +27,16 @@
 2.16.16
 - Mongo config added
 
-2.17.17
+2.17.16
 - Download Feature
 
-3.14
+3.14.16
 - Stats on About page
 - Sort on AV and ID
 - Better Install Instructions
+
+3.18.16
+- MISP integration
+- Bulk archive and unarchive
+- Hide pulls depending on config setting
+- Multi AV feature

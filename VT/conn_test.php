@@ -27,6 +27,31 @@ if($source == 'crits')
         echo "Can't Connect to Crits";
     }
 }
+if($source == 'misp')
+{
+    try
+    {
+        $data = array('request' => array('value' => $array['md5']));
+        $data_json = json_encode($data);
+        $context = stream_context_create(array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => "Authorization: " . $misp_api_key . "\r\n" .
+                            "Accept: application/json\r\n" .
+                            "content-type: application/json\r\n"
+            )
+        ));
+        $url = $misp_url . "/servers/getVersion";
+        $result2 = file_get_contents($url, false, $context);
+        $thejson = json_decode($result2, true);
+        $res = count($thejson);
+        if($res > 0){echo "MISP Connected";}else{echo "Can't Connect to MISP";}
+    }
+    catch ( MongoConnectionException $e )
+    {
+        echo "Can't Connect to MISP";
+    }
+}
 if($source == 'mongo')
 {
     try

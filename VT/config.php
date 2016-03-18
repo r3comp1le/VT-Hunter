@@ -12,6 +12,11 @@ $crits_url = "https://myCrits.com/crits"; #Until /api, https://crits.com/crits/a
 $crits_api_key = "123456789";
 $crits_user = "username";
 
+#MISP Connections
+$misp_on = "false";
+$misp_url = "https://myMisp.com";
+$misp_api_key = "123456789";
+
 #VT
 #VirusTotal Intelligence API
 $vt_mal = "false";
@@ -24,8 +29,8 @@ $vt_search_key = "0987654321";
 $delete_alerts = "false";
 
 #Version
-$version = "2.3";
-$updated = "Mar 14 2016";
+$version = "2.4";
+$updated = "Mar 18 2016";
 
 #AV
 $av_vendor = "McAfee";
