@@ -17,20 +17,25 @@ $misp_on = "false";
 $misp_url = "https://myMisp.com";
 $misp_api_key = "123456789";
 
-#VT
+#Viper Connections
+$viper_on = "false";
+$viper_url = "http://viper.li:8080";
+$viper_api_url = "http://viper.li:9090";
+
+#VT 
 #VirusTotal Intelligence API
-$vt_mal = "false";
+$vt_mal = "true";  
 $vt_mal_key = "123456789";
 
 #VirusTotal Private Mass API
-$vt_search = "false";
+$vt_search = "false"; 
 $vt_search_key = "0987654321";
 
 $delete_alerts = "false";
 
 #Version
-$version = "2.4";
-$updated = "Mar 18 2016";
+$version = "2.5";
+$updated = "Apr 17 2016";
 
 #AV
 $av_vendor = "McAfee";
@@ -40,4 +45,3 @@ $av_vendors = array("ESET-NOD32","TrendMicro","Sophos","McAfee","Kaspersky","For
 #Allow Manual Pull of VT, MISP, CRITS
 $manual_pull = "true";
 ?>
-

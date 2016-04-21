@@ -463,6 +463,26 @@ function runMISP(title) {
 
 }
 
+function runViper(title) {
+
+    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    $("#load-bod").html(resp)
+    $('#load_mod').modal('show');
+
+    $.ajax({
+        type: "GET",
+        url: "VT/vt_runViper.php",
+        async: false,
+        success: function(response){
+            $('#load_mod').modal('hide');
+            $("#modal-bod").html(response);
+            $("#modal-title").html(title);
+            $('#scrap_mod').modal('show');
+        },
+    });
+
+}
+
 function showConfig(title) {
     response = "<?
     #Mongo
@@ -477,6 +497,12 @@ function showConfig(title) {
     print "<b>Crits Integration</b>: " . $crits_on . "<br>";
     print "<b>Crits URL</b>: " . $crits_url . "<br>";
     print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;crits&#39;)'>Test Connection</button><br>";
+    print "<br>";
+	
+	#Viper Connections
+    print "<b>Viper Integration</b>: " . $viper_on . "<br>";
+    print "<b>Viper URL</b>: " . $viper_api_url . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;viper&#39;)'>Test Connection</button><br>";
     print "<br>";
 	
 	#MISP Connections
@@ -584,6 +610,7 @@ $cursor->sort(array("date" => -1));
     <? if($manual_pull == "true")
     {
         print "<li onclick=\"reloadData('VT Sync')\"><a data-toggle='tooltip' data-placement='top' title='Get Alerts from VT'>Pull VT</a></li>";
+		print "<li role='separator' class='divider'></li>";
         if($crits_on == "true")
         {
             print "<li onclick=\"runCrits('Crits Lookup')\"><a data-toggle='tooltip' data-placement='top' title='Crits Lookup'>Pull Crits</a></li>";
@@ -591,6 +618,10 @@ $cursor->sort(array("date" => -1));
 		if($misp_on == "true")
         {
             print "<li onclick=\"runMISP('MISP Lookup')\"><a data-toggle='tooltip' data-placement='top' title='Crits Lookup'>Pull MISP</a></li>";
+        }
+		if($viper_on == "true")
+        {
+            print "<li onclick=\"runViper('Viper Lookup')\"><a data-toggle='tooltip' data-placement='top' title='Viper Lookup'>Pull Viper</a></li>";
         }
     }
     ?>
@@ -606,11 +637,23 @@ $cursor->sort(array("date" => -1));
   <th data-field="set" data-sortable="true">Rule Set</th>
   <th data-field="rule" data-sortable="true">Rule</th>
   <th data-field="md5" data-sortable="true">MD5</th>
-  <? if($crits_on == "true")
+  <th data-field="filename" data-sortable="true">FileName</th>
+  <? 
+  if($crits_on == "true")
   {
     print "<th data-field='crits' data-sortable='true'>CRITS</th>";
-  }?>
+  }
+  if($misp_on == "true")
+  {
+    print "<th data-field='crits' data-sortable='true'>MISP</th>";
+  }
+  if($viper_on == "true")
+  {
+    print "<th data-field='crits' data-sortable='true'>Viper</th>";
+  }
+  ?>
   <th data-field="seen" data-sortable="true">First Seen</th>
+  <th data-field="compile" data-sortable="true">Compile</th>
   <th data-field="av" data-sortable="true" data-sorter="idSorter" data-sort-name="_av_data">AV</th>
   <? if($av_multiple == "true")
   {
@@ -642,8 +685,16 @@ foreach ($cursor as $array)
     print "<td data-id='".$int."'><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">".$int."</button></td>";
     print "<td><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>";
     print "<td>".$array['subject']."</td>";
-    print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a></td>";
-
+    print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a>";
+    if(!empty($array['url'])){print "<span class='label label-default'>ITW</span>";}
+    if(!empty($array['behaviour_dns'])){print "<span class='label label-default'>C2</span>";}
+    print "</td>";
+	print "<td>";
+	foreach ($array['submission_names'] as $filename)
+	{
+	print $filename . "<br>";
+	}
+	print "</td>";
     # Crits check
     if ($crits_on == "true")
     {
@@ -652,6 +703,26 @@ foreach ($cursor as $array)
           if($array['crits'] == "true")
           {
               print "<td><a href='".$crits_url."/samples/details/".$array['md5']."' target='_blank'>Crits</a></td>";
+          }
+          else
+          {
+              print "<td>N/A</td>";
+          }
+      }
+      else
+      {
+          print "<td>N/A</td>";
+      }
+    }
+
+    # Viper check
+    if ($viper_on == "true")
+    {
+      if (isset($array['viper']))
+      {
+          if($array['viper'] == "true")
+          {
+              print "<td><a href='".$viper_api_url."/file/default/".$array['sha256']."' target='_blank'>Viper</a></td>";
           }
           else
           {
@@ -686,6 +757,7 @@ foreach ($cursor as $array)
 
     #AV Logic
     print "<td>".$array['first_seen']."</td>";
+	print "<td>".$array['timestamp']."</td>";
     if($array['positives'] == 0)
     {
         print "<td data-id='" . $array['positives'] . "'><button type='button' class='btn btn-danger btn-xs'>".$array['positives']."/".$array['total']."</button></td>";
