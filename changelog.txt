@@ -40,3 +40,8 @@
 - Bulk archive and unarchive
 - Hide pulls depending on config setting
 - Multi AV feature
+
+4.20.16
+- Viper Integration
+- C2 and ITW tags
+- See Filenames and Compile times
