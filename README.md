@@ -39,8 +39,6 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   sudo nano /etc/php5/apache2/php.ini
   (add to end file)
   extension=mongo.so 
-  mongo.long_as_object = 1
-  mongo.native_long = 1
 
   ```
   - Make vt.log writtable with appropriate permissions
