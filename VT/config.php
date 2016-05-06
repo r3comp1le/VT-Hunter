@@ -35,7 +35,7 @@ $delete_alerts = "false";
 
 #Version
 $version = "2.5";
-$updated = "Apr 17 2016";
+$updated = "May 5 2016";
 
 #AV
 $av_vendor = "McAfee";
