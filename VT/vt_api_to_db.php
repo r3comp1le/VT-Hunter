@@ -59,29 +59,6 @@ foreach ($thejson['notifications'] as $array)
     $id_check = array('id' => $vt_id);
     $cursor = $collection->find($id_check);
 
-    # If VT ID already exist, delete from VTI
-    if($cursor->count() > 0)
-    {
-        if($delete_alerts == "true")
-        {
-            $del_url = "https://www.virustotal.com/intelligence/hunting/delete-notifications/programmatic/?key=".$vt_mal_key;
-            $opts2 = array(
-                'http' => array(
-                'method'  => 'POST',
-                #'proxy' => 'tcp://proxy.com:55555',
-                'header' => "Content-Type: application/json",
-                'content' => "[".$vt_id."]",
-                'request_fulluri' => true,
-                )
-            );
-            $context2  = stream_context_create($opts2);
-            $result2 = file_get_contents($del_url, false, $context2);
-            $thejson = json_decode($result2, true);
-            if($thejson['deleted'] == 1){$int_del++;}
-            else{fwrite($log, "ERROR!!!  Could not delete: " . $vt_id . "\n");}
-        }
-    }
-
     # Add to mongodb
     else
     {
@@ -90,8 +67,25 @@ foreach ($thejson['notifications'] as $array)
         $cursor = $collection->find($hash_check);
        
         if ($cursor->count() != 0) {
+
+            $titles = $cursor[0]["submissions_names"];
             #We've seen the hash before, update the count and all that
+            $url_vt_search = "https://www.virustotal.com/vtapi/v2/file/report?allinfo=1&apikey=".$vt_search_key."&resource=".$vt_md5;
+            $opts_vt_search = array(
+              'http' => array(
+                'method'  => 'GET',
+                'request_fulluri' => true,
+                )
+              );
+            $context_vt_search  = stream_context_create($opts_vt_search);
+            $result_vt_search = file_get_contents($url_vt_search, false, $context_vt_search);        
+            $thejson_vt_search = json_decode($result_vt_search, true);
             
+            $collection->update(
+              array("md5" => $vt_md5),
+              array("submission_names" => array_merge($titles, $thejson_vt_search["submission_names"])
+            );
+
 
         } else {
             #This is a totally new hash, add it normally
