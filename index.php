@@ -288,21 +288,16 @@ function importEvent() {
 
 function importFunc() {
     var value = document.getElementById("importhash").value;
-    for (var hash in value.split("\n")) {
-      if (hash != "") {
-        console.log("Importing "+value);
-        $.ajax({
-             type: "POST",
-             url: "VT/vt_import_event.php",
-             data: {md5:value},
-             success: function(data){
-               console.log(data);
-               $("#load_mod").modal("hide")
-             },
-             async:  false
-        });
-      }
-    }
+    $.ajax({
+         type: "POST",
+         url: "VT/vt_import_event.php",
+         data: {md5s:value.split("\n")},
+         success: function(data){
+           console.log("Imported");
+           console.log(data);
+         },
+         async: false
+    });
 }
 
 function confirmDel(title) {
@@ -817,11 +812,11 @@ foreach ($cursor as $array)
                 $found_vendor = true;
                 $res = $array["scans"][$vendor];
                 print "<td>" . $vendor . "<br>" . $res . "</td>";
-                //break 1;
+                break 1;
             }
         }
         if ($found_vendor == false){
-            print "<td>o no</td>";
+            print "<td>[None found]</td>";
         }
     }
     else{

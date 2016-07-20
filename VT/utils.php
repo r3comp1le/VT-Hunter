@@ -227,7 +227,6 @@ function add_event($thejson, $collection, $stats) {
             "total" => $vt_total,
             "type" => $vt_type
             );
-        print_r($sample_alert_info["scans"]);
         $sample_details = array_merge($sample_details, $sample_alert_info);
 
         $collection->insert($sample_details);
