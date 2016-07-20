@@ -1,18 +1,22 @@
 <?
 function add_event($thejson, $collection, $stats) {
-    print_r($thejson["scans"]);
     $int_add = 0;
     $date = date("F j, Y, g:i a");
     #Extract event info
     $vt_date = $date;
     $vt_first_seen = $thejson['first_seen'];
-    $vt_id = hexdec($thejson['scan_id']);
+    $vt_id = intval(explode("-", $thejson['scan_id'])[1]);
     $vt_last_seen = $thejson['last_seen'];
     $vt_match = 5;
     $vt_md5 = $thejson['md5'];
     $vt_positives = $thejson['positives'];
     $vt_ruleset_name = "Manual Import";
     $vt_scans = $thejson['scans'];
+    $vt_scan = array();
+    foreach (array_keys($vt_scans) as $r) {
+      $vt_scan[$r] = $vt_scans[$r]["result"];
+    }
+    $vt_scans = $vt_scan;
     $vt_sha1 = $thejson['sha1'];
     $vt_sha256 = $thejson['sha256'];
     $vt_size = $thejson['size'];
@@ -223,7 +227,7 @@ function add_event($thejson, $collection, $stats) {
             "total" => $vt_total,
             "type" => $vt_type
             );
-
+        print_r($sample_alert_info["scans"]);
         $sample_details = array_merge($sample_details, $sample_alert_info);
 
         $collection->insert($sample_details);

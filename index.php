@@ -277,8 +277,8 @@ function downloadFunc() {
 }
 
 function importEvent() {
-    response = "<form><label for='md5'>MD5:</label>";
-    response += "<input name='md5' id='importhash' placeholder='hash'></input>";
+    response = "<form><label for='md5'>MD5 (One per line!):</label>";
+    response += "<textarea name='md5' id='importhash' placeholder='hashes'></textarea>";
     response += "<button type='button' class='btn btn-success' onclick='importFunc()'>";
     response += "Import</button></form>";
     $("#modal-bod").html(response);
@@ -288,17 +288,21 @@ function importEvent() {
 
 function importFunc() {
     var value = document.getElementById("importhash").value;
-    console.log("Importing "+value);
-    $.ajax({
-         type: "POST",
-         url: "VT/vt_import_event.php",
-         data: {md5:value},
-         success: function(data){
-          console.log(data);
-          $("#load_mod").modal("hide")
-         },
-         async:   false
-     });
+    for (var hash in value.split("\n")) {
+      if (hash != "") {
+        console.log("Importing "+value);
+        $.ajax({
+             type: "POST",
+             url: "VT/vt_import_event.php",
+             data: {md5:value},
+             success: function(data){
+               console.log(data);
+               $("#load_mod").modal("hide")
+             },
+             async:  false
+        });
+      }
+    }
 }
 
 function confirmDel(title) {
@@ -811,12 +815,13 @@ foreach ($cursor as $array)
         foreach ($av_vendors as $vendor){
             if ($array['scans'][$vendor]!=""){
                 $found_vendor = true;
-                print "<td>" . $vendor . "<br>" . $array['scans'][$vendor]["result"] . "</td>";
-                break 1;
+                $res = $array["scans"][$vendor];
+                print "<td>" . $vendor . "<br>" . $res . "</td>";
+                //break 1;
             }
         }
         if ($found_vendor == false){
-            print "<td></td>";
+            print "<td>o no</td>";
         }
     }
     else{
