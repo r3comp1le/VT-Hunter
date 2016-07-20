@@ -805,7 +805,16 @@ foreach ($cursor as $array)
       {
           if($array['misp'] == "true")
           {
-              print "<td>".$array['misp_event']."</td>";
+            print("<td>");
+            foreach(explode(",", $array["misp_event"]) as $MEVENT) {
+             
+              $mispdata = $array["misp_data"];
+              $minfo = $mispdata["info"];
+              
+              $datastring = "$minfo";
+              
+              print "<a href='$misp_url/events/view/$MEVENT' data-toggle='tooltip' data-placement='top' title='$datastring'>$MEVENT</a>";
+            }
           }
           else
           {

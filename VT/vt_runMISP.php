@@ -47,7 +47,8 @@ if($misp_on == "true")
                     }
                     $retval = $collection->findAndModify(
                          array("id" => $array['id']),
-                         array('$set' => array('misp' => "true",'misp_event' => $jsonevents))
+                         array('$set' => array('misp' => "true",'misp_event' => $jsonevents,
+                                               "misp_data"=>$jsonevent["Event"]))
                     );
                     $counter++;
                 }
