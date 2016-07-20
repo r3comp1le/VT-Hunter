@@ -42,8 +42,8 @@ require('VT/config.php');
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="vt.php">VT Hunter</a>
-      <a class="navbar-brand" href="vt.php?archive=true">Archived</a>
+      <a class="navbar-brand" href="index.php">VT Hunter</a>
+      <a class="navbar-brand" href="index.php?archive=true">Archived</a>
       <a class="navbar-brand" href="about.php">About</a>
 	  <a class="navbar-brand"><span class="label label-danger"><?echo $version;?></span></a>
 	  <a class="navbar-brand"><span class="label label-danger"><?echo $updated;?></span></a>

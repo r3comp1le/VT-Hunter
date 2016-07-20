@@ -12,7 +12,7 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
 
 ### Web Interface
   - All configuration is done in config.php
-  - Navigate to vt.php in browser to use
+  - Navigate to index.php in browser to use
 
 ### Requirements
   - VirusTotal Intelligence API

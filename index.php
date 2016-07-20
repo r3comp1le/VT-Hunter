@@ -276,11 +276,37 @@ function downloadFunc() {
     });
 }
 
+function importEvent() {
+    response = "<form><label for='md5'>MD5:</label>";
+    response += "<input name='md5' id='importhash' placeholder='hash'></input>";
+    response += "<button type='button' class='btn btn-success' onclick='importFunc()'>";
+    response += "Import</button></form>";
+    $("#modal-bod").html(response);
+    $("#modal-title").html("<h3>Import Event</h3");
+    $("#scrap_mod").modal("show");
+}
+
+function importFunc() {
+    var value = document.getElementById("importhash").value;
+    console.log("Importing "+value);
+    $.ajax({
+         type: "POST",
+         url: "VT/vt_import_event.php",
+         data: {md5:value},
+         success: function(data){
+          console.log(data);
+          $("#load_mod").modal("hide")
+         },
+         async:   false
+     });
+}
+
 function confirmDel(title) {
     response = "Are you sure you want to Delete?  <button type='button' class='btn btn-danger' onclick=\"deleteFunc()\">YES</button>";
     $("#modal-bod").html(response);
     $("#modal-title").html(title);
     $('#scrap_mod').modal('show');
+
 }
 
 function confirmArch(title, archStatus) {
@@ -545,8 +571,8 @@ function idSorter(a,b){
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="vt.php">VT Hunter</a>
-      <a class="navbar-brand" href="vt.php?archive=true">Archived</a>
+      <a class="navbar-brand" href="index.php">VT Hunter</a>
+      <a class="navbar-brand" href="index.php?archive=true">Archived</a>
       <a class="navbar-brand" href="about.php">About</a>
     </div>
   </div>
@@ -563,6 +589,8 @@ try
 }
 catch ( MongoConnectionException $e )
 {
+    echo $e;
+    die();
     echo '<div class="alert alert-block alert-danger fade in"><button data-dismiss="alert" class="close close-sm" type="button"><i class="icon-remove"></i></button>Can\'t Connect to Mongo</div>';
     exit();
 }
@@ -593,8 +621,19 @@ $cursor->sort(array("date" => -1));
   </ul>
 </div>
 
+<!-- Add a custom event from VT -->
 <div class="btn-group">
-	<button type='button' class='btn btn-danger' data-toggle='tooltip' data-placement='top' title='Delete from DB' onclick="confirmDel('Delete')">Delete</button>
+  <button type='button' class='btn btn-info' data-toggle='tooltip'
+          data-placement='top' title='Add a new event from VT'
+          onclick='importEvent()'>
+      Import
+  </button>
+</div>
+
+<div class="btn-group">
+  <button type='button' class='btn btn-danger' data-toggle='tooltip' 
+          data-placement='top' title='Delete from DB' 
+          onclick="confirmDel('Delete')">Delete</button>
 </div>
 
 <div class="btn-group">
@@ -772,7 +811,7 @@ foreach ($cursor as $array)
         foreach ($av_vendors as $vendor){
             if ($array['scans'][$vendor]!=""){
                 $found_vendor = true;
-                print "<td>" . $vendor . "<br>" . $array['scans'][$vendor] . "</td>";
+                print "<td>" . $vendor . "<br>" . $array['scans'][$vendor]["result"] . "</td>";
                 break 1;
             }
         }
