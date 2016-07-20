@@ -387,6 +387,30 @@ function archFunc(id) {
     });
 }
 
+function addComment(id) {
+    console.log(id);
+    resp = "<textarea placeholder='A very descriptive comment' id='cmnt' ></textarea>";
+    resp += "<button type='button' class='btn btn-success' onclick='addAComment("+id+")'>Add to Event</button>";
+    $("#modal-bod").html(resp);
+    $("#modal-title").html("<h3>Add a comment</h3>");
+    $('#scrap_mod').modal('show');
+
+}
+function addAComment(id) {
+    var val = document.getElementById("cmnt").value;
+    console.log("Adding "+val+" to "+id);
+    $.ajax({
+      type: "POST",
+      url: "VT/vt_add_comment.php",
+      data: {id:id, comment:val},
+      success: function(data) {
+        console.log(data);
+        $('#load_mod').modal('hide');
+
+      },
+      async: false
+    });
+}
 function UnarchFunc(id) {
     console.log(id);
     trid = "#tr"+id;
@@ -690,6 +714,7 @@ $cursor->sort(array("date" => -1));
     print "<th data-field='crits' data-sortable='true'>Viper</th>";
   }
   ?>
+  <th data-field="comment" data-sortable="false">Comment</th>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="compile" data-sortable="true">Compile</th>
   <th data-field="av" data-sortable="true" data-sorter="idSorter" data-sort-name="_av_data">AV</th>
@@ -791,6 +816,12 @@ foreach ($cursor as $array)
       {
           print "<td>N/A</td>";
       }
+    }
+
+    if (array_key_exists("comment", $array)) {
+      print("<td>".$array["comment"]."<br><br><!--huehuehue--><button onclick='addComment(".$array["id"].")' type='button' class='btn btn-warning'>Replace Comment</button></td>");
+    } else {
+      print("<td><button class='btn' type='button' onclick='addComment(".$array["id"].")'>Add a comment</button></td>");
     }
 
     #AV Logic
