@@ -27,6 +27,10 @@ require('VT/config.php');
     width: 870px;
     height: 300px;
     }
+
+   .filenames {
+      font-family: monospace !important;
+    }
     mark {
     background-color: red;
     color: black;
@@ -431,7 +435,7 @@ function addTheTag(name, id) {
       },
       async: true
     });
-
+    location.reload();
 }
 
 function addATag(id) {
@@ -466,7 +470,7 @@ function removeTag(id, tag) {
     }
   });
 
-  //location.reload();
+  location.reload();
 }
 
 function UnarchFunc(id) {
@@ -513,7 +517,7 @@ function showlog(title) {
 
 function reloadData(title) {
 
-    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    resp = "<h3>Pulling from VirusTotal...</h3><div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
     $("#load-bod").html(resp)
     $('#load_mod').modal('show');
 
@@ -552,7 +556,7 @@ function runCrits(title) {
 
 function runMISP(title) {
 
-    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    resp = "<h3>Pulling from MISP...</h3><div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
     $("#load-bod").html(resp)
     $('#load_mod').modal('show');
 
@@ -646,6 +650,12 @@ function idSorter(a,b){
     if (a.id < b.id) return -1;
     if (a.id > b.id) return 1;
     return 0
+}
+
+function tagsorter(a, b) {
+  if (a.length < b.length) return -1;
+  if (a.length > b.length) return 1;
+  return 0;
 }
 </script>
 
@@ -754,7 +764,6 @@ $cursor->sort(array("date" => -1));
 <tr>
   <th data-field="check" data-sortable="false"><input type="checkbox" onClick="toggle(this)"/> All<br/></th>
   <th data-field="num" data-sortable="true" data-sorter="idSorter" data-sort-name="_num_data">Details</th>
-  <th data-field="set" data-sortable="true">Rule Set</th>
   <th data-field="rule" data-sortable="true">Rule</th>
   <th data-field="md5" data-sortable="true">MD5</th>
   <th data-field="filename" data-sortable="true">FileName</th>
@@ -772,7 +781,7 @@ $cursor->sort(array("date" => -1));
     print "<th data-field='crits' data-sortable='true'>Viper</th>";
   }
   ?>
-  <th data-field="tag" data-sortable="false">Tags</th>
+  <th data-field="tag" data-sortable="true" data-sorter="tagsorter">Tags</th>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="compile" data-sortable="true">Compile</th>
   <th data-field="av" data-sortable="true" data-sorter="idSorter" data-sort-name="_av_data">AV</th>
@@ -810,10 +819,26 @@ foreach ($cursor as $array)
     if(!empty($array['behaviour_dns'])){print "<span class='label label-default'>C2</span>";}
     print "</td>";
 	print "<td>";
-	foreach ($array['submission_names'] as $filename)
-	{
-	print $filename . "<br>";
-	}
+  print "<div class='filenames'>";
+  $submission = $array["submission_names"];
+
+  print ((strlen($submission[0]) > 20)? substr($submission[0],0,20)."...":$submission[0]) ;
+
+  if (count($submission) > 1) {
+    $modifier = 0;
+    if (strpos($submission[0], "_")) $modifier = 1;
+    $padding = min(23, strlen($submission[0]));
+    for ($i = 0; $i < 30-$padding; $i++) echo "&nbsp";
+	  print("<button type='button' class='btn btn-xs btn-info' data-toggle='collapse' data-target='#names-{$array['id']}'><i class='glyphicon glyphicon-menu-down'></i></button>");
+
+    print("<div  class='collapse' id='names-{$array['id']}'>");
+    foreach (array_slice($array['submission_names'], 1) as $filename)
+	  {
+	    print ((strlen($filename) > 30)? substr($filename,0,30)."...":$filename) . "<br>";
+	  }
+  }
+  print("</div>");
+  print("</div>");
 	print "</td>";
     # Crits check
     if ($crits_on == "true")
@@ -893,15 +918,14 @@ foreach ($cursor as $array)
         print("function $func() {");
         print("  removeTag('$id', '$tag')");
         print("}</script>");
-        print("$tag 
-              <button type='button' class='btn' 
+        print("<div class='input-group'>$tag <button type='button' class='btn btn-xs' 
                       onclick='".$func."()'>
                   <i class='glyphicon glyphicon-minus'></i>
-              </button>
-              <br>");
+              </button></div>
+              ");
       }
     }
-    print("<button class='btn' type='button' onclick='addTag(".$array["id"].")'><i class='glyphicon glyphicon-plus'></i></button>");
+    print("<button class='btn btn-xs' type='button' onclick='addTag(".$array["id"].")'><i class='glyphicon glyphicon-plus'></i></button>");
     
     echo "</td>";
 
@@ -976,7 +1000,7 @@ foreach ($cursor as $array)
     </div>
     <!-- Dynamic Modal content-->
 <footer>
-<p><center>&copy; r3comp1le 2016</center></p>
+<p><center>&copy; Super Magic System 2016</center></p>
 </footer>
 </div> <!-- /container -->
 </body>

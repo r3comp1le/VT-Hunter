@@ -10,8 +10,8 @@ $cursor = $collection->findOne(array("id" => intval($_POST["id"])));
 print("Removing ".$_POST["tag"]);
 
 function getIndex($const, $arr) {
-  for ($i = 0; $i < count($arr); $i++) {
-    if ($arr[$i] == $const) return $i;
+  for ($i = 0; $i < count($arr)+1; $i++) {
+    if (isset($arr[$i]) && $arr[$i] == $const) return $i;
   }
   return -1;
 }
