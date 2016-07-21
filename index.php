@@ -937,11 +937,16 @@ foreach ($cursor as $array)
     }
     print "<td>".$array['size']."</td>";
     print "<td>".$array['type']."</td>";
-    print "<td>
-    <button type='button' class='btn btn-danger btn-xs' data-toggle='tooltip' data-placement='top' title='Delete' onclick='delFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button>
-    <button type='button' class='btn btn-success btn-xs' data-toggle='tooltip' data-placement='top' title='Archive' onclick='archFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-floppy-saved' aria-hidden='true'></span></button>
-    <button type='button' class='btn btn-primary btn-xs' data-toggle='tooltip' data-placement='top' title='UnArchive' onclick='UnarchFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-floppy-remove' aria-hidden='true'></span></button>
-    </td>";
+    print "<td>";
+    if (isset($_GET["archive"])) {
+
+    print "<button type='button' class='btn btn-primary btn-xs' data-toggle='tooltip' data-placement='top' title='UnArchive' onclick='UnarchFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-floppy-remove' aria-hidden='true'></span></button>";
+    } else {
+      print "<button type='button' class='btn btn-success btn-xs' data-toggle='tooltip' data-placement='top' title='Archive' onclick='archFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-floppy-saved' aria-hidden='true'></span></button>";
+   }
+    print "<button type='button' class='btn btn-danger btn-xs' data-toggle='tooltip' data-placement='top' title='Delete' onclick='delFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button>";
+    print"</td>";
+
     print "</tr>";
     $int++;
 }
