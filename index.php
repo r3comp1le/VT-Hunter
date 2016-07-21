@@ -816,7 +816,7 @@ foreach ($cursor as $array)
         print "<tr id='tr".number_format($array['id'],0,'.','')."'>";
     }
     print "<td><input type='checkbox' name='selected' id='".$array['md5']."' value='".number_format($array['id'],0,'.','')."'/></td>";
-    print "<td data-id='".$int."'><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">Event ".$int."</button><br><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>";
+    print "<td data-id='".$int."'><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">Event ".$int."</button><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>";
     print "<td>".$array['subject']."</td>";
     print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a>";
     if(!empty($array['url'])){print "<span class='label label-default'>ITW</span>";}
@@ -946,18 +946,37 @@ foreach ($cursor as $array)
     }
     if($av_multiple == "true")
     {
-        $found_vendor = false;
-        foreach ($av_vendors as $vendor){
-            if ($array['scans'][$vendor]!=""){
-                $found_vendor = true;
-                $res = $array["scans"][$vendor];
-                print "<td>" . $vendor . "<br>" . $res . "</td>";
-                break 1;
+      $things_we_care_about = array();
+      $found_vendor = false;
+      foreach ($av_vendors as $vendor){
+          if ($array['scans'][$vendor]!=""){
+              $found_vendor = true;
+              $scan = $vendor . ": ".$array["scans"][$vendor];
+              $scan = (strlen($scan) > 40)?substr($scan,0,40)."...":$scan;
+              array_push($things_we_care_about, $scan);
             }
         }
-        if ($found_vendor == false){
-            print "<td>[None found]</td>";
+      
+        print "<td class='filenames'>";
+        if ($found_vendor) {
+            if (count($things_we_care_about) == 1) {
+              print($things_we_care_about[0]);
+            } else {
+              print($things_we_care_about[0]);
+              $offset = min(43, -2+strlen($things_we_care_about[0]));
+              for ($i = 0; $i < 45-$offset; $i++) print("&nbsp");
+              print("<button class='btn btn-xs btn-info' data-toggle='collapse' data-target='#avs_{$array['id']}' type='button'>");
+              print("<i class='glyphicon glyphicon-menu-down'></i>");
+              print("</button><div class='collapse' id='avs_{$array['id']}'>");
+              foreach (array_slice($things_we_care_about, 1) as $av) {
+                print("$av<br>");
+              }
+              print("</div>");
+            }
+        } else {
+            print "[None found]";
         }
+        print "</td>";
     }
     else{
         print "<td>".$array['scans'][$av_vendor]."</td>";
