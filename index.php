@@ -8,11 +8,13 @@ require('VT/config.php');
     <meta charset="utf-8">
     <title>VT Hunter</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    
+    <script src="js/jquery.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
-
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+    <script src="js/jquery-migrate.js"></script>
+
 </head>
 
 <body>
@@ -387,22 +389,59 @@ function archFunc(id) {
     });
 }
 
-function addComment(id) {
-    console.log(id);
-    resp = "<textarea placeholder='A very descriptive comment' id='cmnt' ></textarea>";
-    resp += "<button type='button' class='btn btn-success' onclick='addAComment("+id+")'>Add to Event</button>";
+function addTag(id) {
+    var tags;
+    $.ajax({
+      type: "GET",
+      url: "VT/vt_get_tags.php",
+      success: function(data) { console.log(data); tags = JSON.parse(data); },
+      async: false
+    });
+    resp = "<input type='hidden' id='test' value='"+id+"'></input>";
+    for (var i = 0; i < tags.length; i++) {
+      resp += "<span style='color: "+tags[i]["colour"]+"'>" 
+      resp += "<button type='button' class='btn' ";
+      resp += "onclick='addTheTag(\"" + tags[i]["name"] + "\")'>"
+      resp += "<h4>"+tags[i]["name"]+"</h4></button><br>";
+      resp += "</span>"
+    }
+    resp += "<br><br><h4>Or create a new tag:</h4><br>";
+    resp += "<input placeholder='Tag Name' id='cmnt' ></input><br>";
+    resp += "<style> .inlinepicker { display: inline-block; }</style>";
+    resp += "<label for='clr'>Colour:</label><input value='#00ff00' id='colorpick'></input>"
+    resp += "<button type='button' class='btn btn-success' ";
+    resp += "onclick='addATag("+id+")'>Create</button>";
     $("#modal-bod").html(resp);
-    $("#modal-title").html("<h3>Add a comment</h3>");
+    $("#modal-title").html("<h3>Add a tag</h3>");
     $('#scrap_mod').modal('show');
 
 }
-function addAComment(id) {
+
+function addTheTag(name, id) {
+  if (id == null)
+    var id = document.getElementById("test").value;
+  console.log(id + ", " + name);
+  $.ajax({
+      type: "POST",
+      url: "VT/vt_modify_tag.php",
+      data: {tag:name, id:id},
+      success: function(data) {
+        console.log(data);
+        //location.reload();
+      },
+      async: true
+    });
+
+}
+
+function addATag(id) {
     var val = document.getElementById("cmnt").value;
+    var col = document.getElementById("colorpick").value;
     console.log("Adding "+val+" to "+id);
     $.ajax({
       type: "POST",
-      url: "VT/vt_add_comment.php",
-      data: {id:id, comment:val},
+      url: "VT/vt_add_tag.php",
+      data: {colour:col, name:val},
       success: function(data) {
         console.log(data);
         $('#load_mod').modal('hide');
@@ -410,7 +449,26 @@ function addAComment(id) {
       },
       async: false
     });
+    addTheTag(val, id);
+    location.reload();
 }
+
+function removeTag(id, tag) {
+  console.log("Removing " + tag + " from " + id);
+
+  $.ajax({
+    type: "POST",
+    url: "VT/vt_remove_tag.php",
+    data: {id: id, tag:tag},
+    async: false,
+    success: function(data) {
+      console.log(data);
+    }
+  });
+
+  //location.reload();
+}
+
 function UnarchFunc(id) {
     console.log(id);
     trid = "#tr"+id;
@@ -714,7 +772,7 @@ $cursor->sort(array("date" => -1));
     print "<th data-field='crits' data-sortable='true'>Viper</th>";
   }
   ?>
-  <th data-field="comment" data-sortable="false">Comment</th>
+  <th data-field="tag" data-sortable="false">Tags</th>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="compile" data-sortable="true">Compile</th>
   <th data-field="av" data-sortable="true" data-sorter="idSorter" data-sort-name="_av_data">AV</th>
@@ -827,11 +885,26 @@ foreach ($cursor as $array)
       }
     }
 
-    if (array_key_exists("comment", $array)) {
-      print("<td>".$array["comment"]."<br><br><!--huehuehue--><button onclick='addComment(".$array["id"].")' type='button' class='btn btn-warning'>Replace Comment</button></td>");
-    } else {
-      print("<td><button class='btn' type='button' onclick='addComment(".$array["id"].")'>Add a comment</button></td>");
+    echo("<td>");
+    if (array_key_exists("user-tags", $array)) {
+      foreach($array["user-tags"] as $tag) {
+        $id = $array["id"];
+        $func = uniqid("mega_hack");
+        print("<script>");
+        print("function $func() {");
+        print("  removeTag('$id', '$tag')");
+        print("}</script>");
+        print("$tag 
+              <button type='button' class='btn' 
+                      onclick='".$func."()'>
+                  <i class='glyphicon glyphicon-minus'></i>
+              </button>
+              <br>");
+      }
     }
+    print("<button class='btn' type='button' onclick='addTag(".$array["id"].")'><i class='glyphicon glyphicon-plus'></i></button>");
+    
+    echo "</td>";
 
     #AV Logic
     print "<td>".$array['first_seen']."</td>";
@@ -903,4 +976,6 @@ foreach ($cursor as $array)
 </footer>
 </div> <!-- /container -->
 </body>
+
+
 </html>
