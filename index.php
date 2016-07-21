@@ -44,6 +44,10 @@ require('VT/config.php');
     .progress-bar.animate {
         width: 100%;
     }
+
+    td {
+      padding: 2px -15px 2px 2px !important;
+    }
 }
 </style>
 
