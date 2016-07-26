@@ -893,7 +893,7 @@ foreach ($cursor as $array)
         $func = uniqid("mega_hack");
         print("<script>");
         print("function $func() {");
-        print("  removeTag('$id', '$tag')");
+        print("  removeTag('$id', '{$tag["name"]}')");
         print("}</script>");
         print("<div class='input-group'><button style='color: {$tag["colour"]};' onclick=searchTag('{$tag["name"]}')>{$tag["name"]}</button> <button type='button' class='btn btn-xs' 
                       onclick='".$func."()'>

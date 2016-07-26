@@ -17,7 +17,7 @@ print("Finding $id...");
 $cursor = $collection->findOne(array("id"=>$id));
 
 if (!array_key_exists("user-tags", $cursor)) {
-  $cursor["user-tags"] = array($tag);
+  $cursor["user-tags"] = array(array("name"=>$tag, "colour"=>$colour));
   $collection->update(array("id"=>$id),
                       $cursor
                       );
