@@ -922,7 +922,7 @@ foreach ($cursor as $array)
     {
       $things_we_care_about = array();
       $found_vendor = false;
-      foreach ($av_vendors as $vendor){
+      foreach ($av_vendor as $vendor){
           if ($array['scans'][$vendor]!=""){
               $found_vendor = true;
               $scan = $vendor . ": ".$array["scans"][$vendor];
