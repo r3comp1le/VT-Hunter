@@ -1,4 +1,4 @@
-<?
+<?php
 require('config.php');
 
 $theId = intval($_POST['archId']);

@@ -1,4 +1,4 @@
-<?
+<?php
 require("config.php");
 
 $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);

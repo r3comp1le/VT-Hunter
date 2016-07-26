@@ -1,4 +1,4 @@
-<?
+<?php
 require('config.php');
 
 #Create Random Folder

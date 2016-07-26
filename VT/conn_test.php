@@ -1,4 +1,4 @@
-<?
+<?php
 require('config.php');
 
 $source = $_POST['source'];
@@ -56,7 +56,7 @@ if($source == 'mongo')
 {
     try
     {
-        $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
+        $m = new MongoDB\Client("mongodb://".$mongo_server_host.":".$mongo_server_port);
         $db = $m->selectDB($mongo_db);
         $collection = new MongoCollection($db, $mongo_collection);
         echo "Mongo Connected";

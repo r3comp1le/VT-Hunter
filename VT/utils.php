@@ -1,4 +1,4 @@
-<?
+<?php
 function add_event($thejson, $collection, $stats) {
     $int_add = 0;
     $date = date("F j, Y, g:i a");

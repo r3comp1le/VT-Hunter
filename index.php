@@ -1,4 +1,4 @@
-<?
+<?php
 require('VT/config.php');
 
 
@@ -66,7 +66,7 @@ jQuery(document).ready(function($){
 
 <div class="container">
 <br><br><br><br>
-<?
+<?php
 try
 {
     $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
@@ -99,7 +99,7 @@ $cursor->sort(array("date" => -1));
 ?>
 <div class="btn-group">
 <button class="btn btn-info" type="button">
-      Alerts <span class="badge"><?print $cursor->count();?></span>
+      Alerts <span class="badge"><?php print $cursor->count();?></span>
 </button>
 </div>
 
@@ -130,9 +130,11 @@ $cursor->sort(array("date" => -1));
 
 <div class="btn-group">
 	<button type='button' class='btn btn-success' data-toggle='tooltip' 
-          data-placement='top' title='<? echo $archStatus ?> Selected' 
+          data-placement='top' title='<?php 
+echo $archStatus ?> Selected' 
           onclick="confirmArch('Archive','<?echo $archStatus ?>')">
-          <? echo $archStatus ?>
+          <?php 
+echo $archStatus ?>
   </button>
 </div>
 	
@@ -150,7 +152,7 @@ $cursor->sort(array("date" => -1));
     <li onclick="showConfig('Config')"><a data-toggle='tooltip' 
         data-placement='top' title='Show Config'>Config</a>
     </li>
-    <? if($manual_pull == "true")
+    <?php if($manual_pull == "true")
     {
         print "<li onclick=\"reloadData('VT Sync')\"><a data-toggle='tooltip' 
               data-placement='top' title='Get Alerts from VT'>Pull VT</a></li>";
@@ -195,7 +197,7 @@ $cursor->sort(array("date" => -1));
     <th data-field="rule" data-sortable="true">Rule</th>
     <th data-field="md5" data-sortable="true">MD5</th>
     <th data-field="filename" data-sortable="true">FileName</th>
-    <? 
+    <?php 
     if($crits_on == "true") {
       print "<th data-field='crits' data-sortable='true'>CRITS</th>";
     }
@@ -215,7 +217,7 @@ $cursor->sort(array("date" => -1));
   <th data-field="av" data-sortable="true" data-sorter="idSorter" 
       data-sort-name="_av_data">AV
   </th>
-  <? if($av_multiple == "true")
+  <?php if($av_multiple == "true")
   {
     print "<th data-field='av_vendor' data-sortable='true'>AV Description</th>";
   }
@@ -229,7 +231,7 @@ $cursor->sort(array("date" => -1));
 </tr>
 </thead>
 <tbody>
-<?
+<?php 
 $eventID = 1;
 
 foreach ($cursor as $event)

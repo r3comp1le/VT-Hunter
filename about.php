@@ -56,7 +56,7 @@ require('VT/config.php');
 <br><br><br><br>
   <h2>Rule Stats</h2>
 	<?
-	$m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
+	$m = new MongoDB\Client("mongodb://".$mongo_server_host.":".$mongo_server_port);
 	$db = $m->selectDB($mongo_db);
 	$stats = new MongoCollection($db, $mongo_collection_stats);
 	$cursor = $stats->find();

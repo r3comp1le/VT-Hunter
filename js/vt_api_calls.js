@@ -1,6 +1,11 @@
-function runCrits(title) {
+//THE EXTERNAL API CALLS FOR VT HUNTER
 
-    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+//Pull from CRITS (Whatever that is)
+function runCrits(title) {
+    resp = "<div class='progress'>"
+    resp +="<div class='progress-bar progress-bar-striped active' "
+    resp +="role='progressbar' aria-valuenow='100' aria-valuemin='0' "
+    resp +="aria-valuemax='100' style='width: 100%;'></div></div>";
     $("#load-bod").html(resp)
     $('#load_mod').modal('show');
 
@@ -18,9 +23,13 @@ function runCrits(title) {
 
 }
 
+//Pull from MISP
 function runMISP(title) {
 
-    resp = "<h3>Pulling from MISP...</h3><div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    resp = "<h3>Pulling from MISP...</h3><div class='progress'> "
+    resp +="<div class='progress-bar progress-bar-striped active' "
+    resp +="role='progressbar' aria-valuenow='100' aria-valuemin='0' "
+    resp +="aria-valuemax='100' style='width: 100%;'></div></div>";
     $("#load-bod").html(resp)
     $('#load_mod').modal('show');
 
@@ -38,9 +47,12 @@ function runMISP(title) {
 
 }
 
+//Pull from VIPER
 function runViper(title) {
 
-    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
+    resp = "<div class='progress'><div class='progress-bar progress-bar-striped"
+    resp +=" active' role='progressbar' aria-valuenow='100' aria-valuemin='0' "
+    resp +="aria-valuemax='100' style='width: 100%;'></div></div>";
     $("#load-bod").html(resp)
     $('#load_mod').modal('show');
 
