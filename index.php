@@ -260,7 +260,7 @@ function downloadFunc() {
 
 function importEvent() {
     response = "<form><label for='md5'>Hashes (One per line!):</label><br>";
-    response += "<textarea name='md5' id='importhash' placeholder='hashes'></textarea>";
+    response += "<textarea name='md5' id='importhash' placeholder='hashes and hashes and hashes'></textarea>";
     response += "<button type='button' class='btn btn-success' onclick='importFunc()'>";
     response += "Import</button></form>";
     $("#modal-bod").html(response);
@@ -898,7 +898,7 @@ foreach ($cursor as $array)
         print("function $func() {");
         print("  removeTag('$id', '{$tag["name"]}')");
         print("}</script>");
-        print("<div class='input-group'><button style='color: {$tag["colour"]};' onclick=\"searchTag('{$tag["name"]}')\">{$tag["name"]}</button> <button type='button' class='btn btn-xs' 
+        print("<div class='input-group'><button class='btn' style='font-size: 110%; color: white; background-color: {$tag["colour"]};' onclick=\"searchTag('{$tag["name"]}')\">{$tag["name"]}</button> <button type='button' class='btn btn-xs' 
                       onclick='".$func."()'>
                   <i class='glyphicon glyphicon-minus'></i>
               </button></div>
