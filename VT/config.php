@@ -34,8 +34,8 @@ $vt_search_key = "9cae5daf1097b2d46364add154ec005d8513f7037d100ad6d689e9dd789101
 $delete_alerts = "false";
 
 #Version
-$version = "2.5";
-$updated = "May 5 2016";
+$version = "2.6";
+$updated = "26 July 2016";
 
 #AV
 $av_vendor = array("ESET-NOD32","TrendMicro","Sophos","McAfee",

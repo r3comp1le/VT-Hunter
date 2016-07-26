@@ -4,637 +4,51 @@ require('VT/config.php');
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>VT Hunter</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <link rel="stylesheet" 
+         href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+         integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" 
+         crossorigin="anonymous"
+    >
     
     <script src="js/jquery.js"></script>
     <script src="js/jquery-migrate.js"></script>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+    <link rel="stylesheet" 
+          href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css"
+    >
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" 
+         integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
+         crossorigin="anonymous"></script>
+    <script 
+        src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js">
+    </script>
     <link rel="stylesheet" href="css/house_style.css">
     <link rel="stylesheet" href="css/spectrum.css">
     <script src="js/spectrum.js"></script>
+    
+    <!-- LOTS AND LOTS OF JS-->
+    <script src="js/vt_ui.js"></script>
+    <script src="js/vt_events.js"></script>
+    <script src="js/vt_table_ui.js"></script>
+    <script src="js/vt_ui.js"></script>
+    <script src="js/vt_api_calls.js"></script>
+    <script src="js/vt_sorters.js"></script>
+    <script src="js/vt_tagging.js"></script>
+    <script src="js/vt_virustotal.js"></script>
 
 </head>
 
-<body>
 
 <script>
-function toggle(source) {
-    checkboxes = document.getElementsByName('selected');
-    for(var i=0, n=checkboxes.length;i<n;i++) {
-        checkboxes[i].checked = source.checked;
-    }
-}
-
-
-function launch_info_modal(id, title){
-    $.ajax({
-        type: "POST",
-        url: "VT/vt_getcontent.php",
-        data: {theId:id},
-        success: function(data){
-
-            behaviour_dns = "";
-            behaviour_http = "";
-            url = "";
-            sample_info = "";
-            alert_info = "";
-            debug_name = "";
-            debug_signature = "";
-            tags = "";
-
-            alert_info =
-            "<span class='label label-primary'>Sample Details</span>" +
-            "<table class='table table-bordered table-striped table-condensed'>" +
-                "<tbody>" +
-                  "<tr><th>MD5</th><td><a href='https://www.virustotal.com/intelligence/search/?query="+ data.md5 +"#md5'>" + data.md5 + "</a></td></tr>" +
-                  "<tr><th>SHA1</th><td>" + data.sha1 + "</td></tr>" +
-                  "<tr><th>SHA256</th><td>" + data.sha256 + "</td></tr>" +
-                  "<tr><th>First Seen</th><td>" + data.first_seen + "</td></tr>" +
-                  "<tr><th>Last Seen</th><td>" + data.last_seen + "</td></tr>" +
-                  "<tr><th>File Info</th><td>" + data.type + "</td></tr>" +
-                "</tbody>" +
-              "</table>";
-
-            if(typeof data.sample_info !== 'undefined')
-            {
-            trid = data.trid.replace(/\n/g, '<br>');
-            try {
-                for (i = 0; i < data.behaviour_dns.length; i++)
-                {
-                    behaviour_dns +=
-                    JSON.stringify(data.behaviour_dns[i].ip) +" : " + JSON.stringify(data.behaviour_dns[i].hostname) +"<br>" ;
-                }
-
-                for (i = 0; i < data.behaviour_http.length; i++)
-                {
-                    behaviour_http += JSON.stringify(data.behaviour_http[i].url) +"<br>";
-                }
-
-                for (var urls in data.ITW_urls)
-                {
-                    url += urls + " : " + data.ITW_urls[urls] + "<br>";
-                }
-
-                for (var debugs in data.pe_debug['codeview'])
-                {
-                    debug_name = debugs['name'] + "<br>";
-                    debug_signature = debugs['signature'] + "<br>";
-                }
-
-                for (i = 0; i < data.tags.length; i++)
-                {
-                    tags += data.tags[i] + ", ";
-                }
-            }
-            catch(err)
-            {
-                console.log(err.message);
-            }
-
-            sample_info =
-            "<table class='table table-bordered table-striped table-condensed'>" +
-                "<tbody>" +
-                  "<tr><th>Authentihash</th><td>" + data.authentihash + "</td></tr>" +
-                  "<tr><th>Import Hash</th><td><a href='https://www.virustotal.com/intelligence/search/?query=imphash:\""+ data.imphash +"\"'>" + data.imphash + "</a></td></tr>" +
-                  "<tr><th>SSDeep</th><td><a href='https://www.virustotal.com/intelligence/search/?query=ssdeep:%22"+ data.ssdeep +" 40%22'>VT Link</a></td></tr>" +
-                  "<tr><th>Submission Names</th><td>" + data.submission_names + "</td></tr>" +
-                  "<tr><th>Time Submitted</th><td>" + data.times_submitted + "</td></tr>" +
-                  "<tr><th>Timestamp</th><td>" + data.timestamp + "</td></tr>" +
-                  "<tr><th>Packer</th><td>" + data.unpacker + "</td></tr>" +
-                  "<tr><th>Magic</th><td>" + data.magic + "</td></tr>" +
-                  "<tr><th>Tags</th><td>" + tags + "</td></tr>" +
-                "</tbody>" +
-              "</table>" +
-
-            "<span class='label label-primary'>SigCheck</span>" +
-              "<table class='table table-bordered table-striped table-condensed'>" +
-                "<tbody>" +
-                  "<tr><th>Publishers</th><td>" + data.sigcheck_pub + "</td></tr>" +
-                  "<tr><th>Verified</th><td>" + data.sigcheck_verified + "</td></tr>" +
-                  "<tr><th>Date</th><td>" + data.sigcheck_date + "</td></tr>" +
-                  "<tr><th>Signers</th><td>" + data.sigcheck_signers + "</td></tr>" +
-                "</tbody>" +
-              "</table>" +
-
-            "<span class='label label-primary'>TRID</span>" +
-              "<table class='table table-bordered table-striped table-condensed'>" +
-                "<tbody>" +
-                  "<tr><td>" + trid + "</td></tr>" +
-                "</tbody>" +
-              "</table>" +
-
-              "<span class='label label-primary'>PE Debug</span>" +
-              "<table class='table table-bordered table-striped table-condensed'>" +
-                "<tbody>" +
-                  "<tr><td>Name</td><td>"+debug_name+"</tr>" +
-                  "<tr><td>Signature</td><td>"+debug_signature+"</tr>" +
-                "</tbody>" +
-              "</table>" +
-
-            "<span class='label label-primary'>Exif</span>" +
-              "<table class='table table-bordered table-striped table-condensed'>" +
-                "<tbody>" +
-                  "<tr><th>TimeStamp</th><td>" + data.exif_TimeStamp + "</td></tr>" +
-                  "<tr><th>Language</th><td>" + data.exif_LanguageCode + "</td></tr>" +
-                  "<tr><th>File Name</th><td>" + data.exif_OriginalFileName + "</td></tr>" +
-                  "<tr><th>Internal Name</th><td>" + data.exif_InternalName + "</td></tr>" +
-                  "<tr><th>Product Name</th><td>" + data.exif_ProductName + "</td></tr>" +
-                  "<tr><th>Company Name</th><td>" + data.exif_company + "</td></tr>" +
-                "</tbody>" +
-              "</table>" +
-
-            "<span class='label label-primary'>Behaviour</span>" +
-              "<table class='table table-bordered table-striped table-condensed'>" +
-                "<tbody>" +
-                  "<tr><td>UDP</td><td>"+data.behaviour_upd+"</tr>" +
-                  "<tr><td>HTTP</td><td>"+behaviour_http+"</tr>" +
-                  "<tr><td>DNS</td><td>"+behaviour_dns+"</tr>" +
-                  "<tr><td>TCP</td><td>"+data.behaviour_tcp+"</tr>" +
-                "</tbody>" +
-              "</table>" +
-
-            "<span class='label label-primary'>ITW</span>" +
-              "<table class='table table-bordered table-striped table-condensed'>" +
-                "<tbody>" +
-                  "<tr><td>"+url+"</tr>" +
-                "</tbody>" +
-              "</table>";
-            }
-
-
-        $("#modal-title").html(title);
-        $("#modal-bod").html(
-            alert_info +
-            sample_info
-            );
-
-        $('#scrap_mod').modal('show');
-        },
-    });
-}
-
-function launch_yara_modal(id, title){
-    $.ajax({
-        type: "POST",
-        url: "VT/vt_getcontent.php",
-        data: {theId:id},
-        success: function(data){
-
-        yara = data.match;
-        yara0 = yara.replace(/\n/g, "<br>");
-        yara1 = yara0.replace(/\*begin_highlight*/g, "<mark>");
-        yara2 = yara1.replace(/\*end_highlight*/g, "</mark>");
-
-        $("#modal-bod").html(yara2);
-        $("#modal-title").html(title + ' (' + data.date + ')');
-        $('#scrap_mod').modal('show');
-
-        },
-    });
-}
-
-function launch_av_modal(id,title){
-    $.ajax({
-        type: "POST",
-        url: "VT/vt_getcontent.php",
-        data: {theId:id},
-        success: function(data){
-
-        var av = "";
-
-        for (x in data.scans)
-        {
-            if(data.scans[x] != null){av += "<b>"+x+"</b>" + ":" + data.scans[x] + "<br>";}
-        }
-
-        $("#modal-bod").html(av);
-        $("#modal-title").html(title);
-        $('#scrap_mod').modal('show');
-        },
-    });
-}
-
-function conn_test(source){
-    $.ajax({
-        type: "POST",
-        url: "VT/conn_test.php",
-        data: {source:source},
-        success: function(data){
-            alert(data);
-        },
-    });
-}
-
-function downloadFunc() {
-    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
-    $("#load-bod").html(resp)
-    $('#load_mod').modal('show');
-
-    var md5s = []
-    $("input:checkbox[name=selected]:checked").each(function(){
-        md5 = this.id;
-        md5s.push(md5);
-    });
-    thelink = '';
-
-    $.ajax({
-        type: "POST",
-        url: "VT/vt_down.php",
-        data : {md5Array : md5s},
-        async: false,
-        success: function(data){
-            response = data;
-            $('#load_mod').modal('hide');
-            $("#modal-bod").html(response);
-            $("#modal-title").html('Download Zip');
-            $('#scrap_mod').modal('show');
-        },
-    });
-}
-
-function importEvent() {
-    response = "<form><label for='md5'>Hashes (One per line!):</label><br>";
-    response += "<textarea name='md5' id='importhash' placeholder='hashes and hashes and hashes'></textarea>";
-    response += "<button type='button' class='btn btn-success' onclick='importFunc()'>";
-    response += "Import</button></form>";
-    $("#modal-bod").html(response);
-    $("#modal-title").html("<h3>Import Events</h3");
-    $("#scrap_mod").modal("show");
-}
-
-function importFunc() {
-    var value = document.getElementById("importhash").value;
-    $.ajax({
-         type: "POST",
-         url: "VT/vt_import_event.php",
-         data: {md5s:value.split("\n")},
-         success: function(data){
-           console.log("Imported");
-           console.log(data);
-         },
-         async: false
-    });
-}
-
-function confirmDel(title) {
-    response = "Are you sure you want to Delete?  <button type='button' class='btn btn-danger' onclick=\"deleteFunc()\">YES</button>";
-    $("#modal-bod").html(response);
-    $("#modal-title").html(title);
-    $('#scrap_mod').modal('show');
-
-}
-
-function confirmArch(title, archStatus) {
-    response = "Are you sure you want to " + archStatus + "?  <button type='button' class='btn btn-danger' onclick=\"archiveFunc('"+archStatus+"')\">YES</button>";
-    $("#modal-bod").html(response);
-    $("#modal-title").html(title);
-    $('#scrap_mod').modal('show');
-}
-
-function deleteFunc() {
-    $("input:checkbox[name=selected]:checked").each(function(){
-        id = $(this).val();
-        //console.log(id);
-        delFunc(id);
-    });
-    $('#scrap_mod').modal('hide');
-    location.reload();
-}
-
-function archiveFunc(archStatus) {
-    $("input:checkbox[name=selected]:checked").each(function(){
-        id = $(this).val();
-        //console.log(id);
-        if(archStatus=="Archive")
-        {
-            archFunc(id);
-        }
-        else
-        {
-            UnarchFunc(id)
-        }
-    });
-    $('#scrap_mod').modal('hide');
-    location.reload();
-}
-
-function delFunc(id) {
-    trid = "#tr"+id;
-    //console.log(trid);
-    $.ajax({
-        type: "POST",
-        url: "VT/vt_del.php",
-        data: {delId:id},
-        success: function(data){
-            if(data.trim() == "200")
-            {
-                removeRow(trid);
-                //console.log("Deleted");
-            }
-            else
-            {
-                //console.log("Did not delete");
-                //console.log(data);
-            }
-        },
-        async:   false
-    });
-}
-
-function archFunc(id) {
-    console.log(id);
-    trid = "#tr"+id;
-    $.ajax({
-        type: "POST",
-        url: "VT/vt_archive.php",
-        data: {archId:id},
-        success: function(data){
-            if(data.trim() == "archived")
-            {
-                removeRowA(trid);
-                console.log("Archived");
-            }
-            else
-            {
-                console.log(data);
-            }
-        },
-        async:   false
-    });
-}
-
-function addTag(id) {
-    var tags;
-    $.ajax({
-      type: "GET",
-      url: "VT/vt_get_tags.php",
-      success: function(data) { console.log(data); tags = JSON.parse(data); },
-      async: false
-    });
-    resp = "<input type='hidden' id='test' value='"+id+"'></input>";
-    for (var i = 0; i < tags.length; i++) {
-      resp += "<span style='color: "+tags[i]["colour"]+"'>" 
-      resp += "<button type='button' class='btn' ";
-      resp += "onclick='addTheTag(\"" + tags[i]["name"] + "\")'>"
-      resp += "<h4>"+tags[i]["name"]+"</h4></button><br>";
-      resp += "</span>"
-    }
-    resp += "<br><br><h4>Or create a new tag:</h4><br>";
-    resp += "<input placeholder='Tag Name' id='cmnt' ></input><br>";
-    resp += "<label for='clr'>Colour:</label><input type='color' id='custom' />"
-    resp += "<button type='button' class='btn btn-success' ";
-    resp += "onclick='addATag("+id+")'>Create</button>";
-    $("#modal-bod").html(resp);
-    $("#modal-title").html("<h3>Add a tag</h3>");
-    $('#scrap_mod').modal('show');
-
-}
-
-function addTheTag(name, id) {
-  if (id == null)
-    var id = document.getElementById("test").value;
-  console.log(id + ", " + name);
-  $.ajax({
-      type: "POST",
-      url: "VT/vt_modify_tag.php",
-      data: {tag:name, id:id},
-      success: function(data) {
-        console.log(data);
-        location.reload();
-      },
-      async: true
-    });
-}
-
-function addATag(id) {
-    var val = document.getElementById("cmnt").value;
-    var col = document.getElementById("custom").value;
-    console.log("Adding "+val+" to "+id);
-    $.ajax({
-      type: "POST",
-      url: "VT/vt_add_tag.php",
-      data: {colour:col, name:val},
-      success: function(data) {
-        console.log(data);
-        $('#load_mod').modal('hide');
-
-      },
-      async: false
-    });
-    addTheTag(val, id);
-    location.reload();
-}
-
-function removeTag(id, tag) {
-  console.log("Removing " + tag + " from " + id);
-
-  $.ajax({
-    type: "POST",
-    url: "VT/vt_remove_tag.php",
-    data: {id: id, tag:tag},
-    async: false,
-    success: function(data) {
-      console.log(data);
-    }
-  });
-
-  location.reload();
-}
-
-function UnarchFunc(id) {
-    console.log(id);
-    trid = "#tr"+id;
-    $.ajax({
-        type: "POST",
-        url: "VT/vt_unarchive.php",
-        data: {archId:id},
-        success: function(data){
-            if(data.trim() == "unarchived")
-            {
-                removeRow(trid);
-                console.log("UnArchived");
-            }
-            else
-            {
-                console.log(data);
-            }
-        },
-        async:   false
-    });
-}
-
-function removeRow(trid) {
-    var $killrow = $(trid);
-    $killrow.addClass("danger");
-    $killrow.fadeOut(1000, function(){$killrow.remove()});
-}
-
-function removeRowA(trid) {
-    var $killrow = $(trid);
-    $killrow.addClass("success");
-    $killrow.fadeOut(1000, function(){$killrow.remove()});
-}
-function showlog(title) {
-    jQuery.get('VT/vt.log', function(data) {
-        $("#modal-bod").html(data)
-        $("#modal-title").html(title);
-        $('#scrap_mod').modal('show');
-    });
-
-}
-
-function reloadData(title) {
-
-    resp = "<h3>Pulling from VirusTotal...</h3><div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
-    $("#load-bod").html(resp)
-    $('#load_mod').modal('show');
-
-    $.ajax({
-        type: "GET",
-        url: "VT/vt_api_to_db.php",
-        async: false,
-        success: function(response){
-            $('#load_mod').modal('hide');
-            $("#modal-bod").html(response);
-            $("#modal-title").html(title);
-            $('#scrap_mod').modal('show');
-        },
-    });
-
-}
-function runCrits(title) {
-
-    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
-    $("#load-bod").html(resp)
-    $('#load_mod').modal('show');
-
-    $.ajax({
-        type: "GET",
-        url: "VT/vt_runCrits.php",
-        async: false,
-        success: function(response){
-            $('#load_mod').modal('hide');
-            $("#modal-bod").html(response);
-            $("#modal-title").html(title);
-            $('#scrap_mod').modal('show');
-        },
-    });
-
-}
-
-function runMISP(title) {
-
-    resp = "<h3>Pulling from MISP...</h3><div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
-    $("#load-bod").html(resp)
-    $('#load_mod').modal('show');
-
-    $.ajax({
-        type: "GET",
-        url: "VT/vt_runMISP.php",
-        async: false,
-        success: function(response){
-            $('#load_mod').modal('hide');
-            $("#modal-bod").html(response);
-            $("#modal-title").html(title);
-            $('#scrap_mod').modal('show');
-        },
-    });
-
-}
-
-function searchTag(tag) {
-  $("#mytable").bootstrapTable("resetSearch", tag);
-}
-function runViper(title) {
-
-    resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
-    $("#load-bod").html(resp)
-    $('#load_mod').modal('show');
-
-    $.ajax({
-        type: "GET",
-        url: "VT/vt_runViper.php",
-        async: false,
-        success: function(response){
-            $('#load_mod').modal('hide');
-            $("#modal-bod").html(response);
-            $("#modal-title").html(title);
-            $('#scrap_mod').modal('show');
-        },
-    });
-
-}
-
-function showConfig(title) {
-    response = "<?
-    #Mongo
-    print "<b>Mongo Server</b>: " . $mongo_server_host . "<br>";
-    print "<b>Mongo Port</b>: " . $mongo_server_port . "<br>";
-    print "<b>Mongo DB</b>: " . $mongo_db . "<br>";
-    print "<b>Mongo Collection</b>: " . $mongo_collection . "<br>";
-    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;mongo&#39;)'>Test Connection</button><br>";
-    print "<br>";
-
-    #Crits Connections
-    print "<b>Crits Integration</b>: " . $crits_on . "<br>";
-    print "<b>Crits URL</b>: " . $crits_url . "<br>";
-    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;crits&#39;)'>Test Connection</button><br>";
-    print "<br>";
-	
-	#Viper Connections
-    print "<b>Viper Integration</b>: " . $viper_on . "<br>";
-    print "<b>Viper URL</b>: " . $viper_api_url . "<br>";
-    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;viper&#39;)'>Test Connection</button><br>";
-    print "<br>";
-	
-	#MISP Connections
-    print "<b>MISP Integration</b>: " . $misp_on . "<br>";
-    print "<b>MISP URL</b>: " . $misp_url . "<br>";
-    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;misp&#39;)'>Test Connection</button><br>";
-    print "<br>";
-
-    #VT
-    print "<b>VT Alerts</b>: " . $vt_mal . "<br>";
-    print "<b>VT Search</b>: " . $vt_search . "<br>";
-    print "<b>Delete Alerts from VT</b>: " . $delete_alerts . "<br>";
-    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;vt&#39;)'>Test Connection</button><br>";
-    print "<br>";
-
-    print "<b>AV Multi</b>: " . $av_multiple . "<br>";
-    print "<b>Manual Pull</b>: " . $manual_pull . "<br>";
-
-    ?>";
-    $("#modal-bod").html(response);
-    $("#modal-title").html(title);
-    $('#scrap_mod').modal('show');
-}
-
-function reloadPage(){
-    location.reload();
-}
-
 jQuery(document).ready(function($){
     $('[data-toggle="tooltip"]').tooltip();
 });
-
-function idSorter(a,b){
-    if (a.id < b.id) return -1;
-    if (a.id > b.id) return 1;
-    return 0
-}
-
-function tagsorter(a, b) {
-  if (a.length < b.length) return -1;
-  if (a.length > b.length) return 1;
-  return 0;
-}
 </script>
 
+<body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
@@ -1003,5 +417,50 @@ foreach ($cursor as $array)
 </div> <!-- /container -->
 </body>
 
+<script>
+function showConfig(title) {
+    response = "<?php
+    #Mongo
+    print "<b>Mongo Server</b>: " . $mongo_server_host . "<br>";
+    print "<b>Mongo Port</b>: " . $mongo_server_port . "<br>";
+    print "<b>Mongo DB</b>: " . $mongo_db . "<br>";
+    print "<b>Mongo Collection</b>: " . $mongo_collection . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;mongo&#39;)'>Test Connection</button><br>";
+    print "<br>";
+
+    #Crits Connections
+    print "<b>Crits Integration</b>: " . $crits_on . "<br>";
+    print "<b>Crits URL</b>: " . $crits_url . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;crits&#39;)'>Test Connection</button><br>";
+    print "<br>";
+
+  #Viper Connections
+    print "<b>Viper Integration</b>: " . $viper_on . "<br>";
+    print "<b>Viper URL</b>: " . $viper_api_url . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;viper&#39;)'>Test Connection</button><br>";
+    print "<br>";
+
+  #MISP Connections
+    print "<b>MISP Integration</b>: " . $misp_on . "<br>";
+    print "<b>MISP URL</b>: " . $misp_url . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;misp&#39;)'>Test Connection</button><br>";
+    print "<br>";
+
+    #VT
+    print "<b>VT Alerts</b>: " . $vt_mal . "<br>";
+    print "<b>VT Search</b>: " . $vt_search . "<br>";
+    print "<b>Delete Alerts from VT</b>: " . $delete_alerts . "<br>";
+    print "<button type='button' class='btn btn-primary btn-xs' onclick='conn_test(&#39;vt&#39;)'>Test Connection</button><br>";
+    print "<br>";
+
+    print "<b>AV Multi</b>: " . $av_multiple . "<br>";
+    print "<b>Manual Pull</b>: " . $manual_pull . "<br>";
+
+    ?>";
+    $("#modal-bod").html(response);
+    $("#modal-title").html(title);
+    $('#scrap_mod').modal('show');
+}
+</script>
 
 </html>
