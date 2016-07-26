@@ -13,6 +13,12 @@ $id = intval($_POST["id"]);
 $tag = $_POST["tag"];
 
 
+function have_Tag($tag_array, $new_tag) {
+  foreach ($tag_array as $old_tag) {
+    if ($old_tag["name"] == $new_tag) return true;
+  }
+  return false;
+}
 print("Finding $id...");
 $cursor = $collection->findOne(array("id"=>$id));
 
@@ -22,11 +28,14 @@ if (!array_key_exists("user-tags", $cursor)) {
                       $cursor
                       );
 } else {
-  array_push($cursor["user-tags"], array("name"=>$tag, "colour"=>$colour));
+  #Make sure we don't already have it
+  if (!have_tag($cursor["user-tags"], $tag)) {
+    array_push($cursor["user-tags"], array("name"=>$tag, "colour"=>$colour));
 
-  $collection->update(array("id"=>$id),
-                      $cursor
-                      );
+    $collection->update(array("id"=>$id),
+                        $cursor
+                        );
+  }
 }
 
 print("Done!");
