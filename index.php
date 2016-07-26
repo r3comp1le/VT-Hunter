@@ -56,8 +56,7 @@ function launch_info_modal(id, title){
                   "<tr><th>SHA256</th><td>" + data.sha256 + "</td></tr>" +
                   "<tr><th>First Seen</th><td>" + data.first_seen + "</td></tr>" +
                   "<tr><th>Last Seen</th><td>" + data.last_seen + "</td></tr>" +
-                  "<tr><th>File Type</th><td>" + data.type + "</td></tr>" +
-                  "<tr><th>Size</th><td>" + data.size + "</td></tr>" +
+                  "<tr><th>File Info</th><td>" + data.type + "</td></tr>" +
                 "</tbody>" +
               "</table>";
 
@@ -770,8 +769,7 @@ $cursor->sort(array("date" => -1));
   {
       print "<th data-field='av_vendor' data-sortable='true'>" . $av_vendor . "</th>";
   }?>
-  <th data-field="size" data-sortable="true">Size</th>
-  <th data-field="Type" data-sortable="true">Type</th>
+  <th data-field="Type" data-sortable="true">File Info</th>
   <th data-field="id" data-sortable="false">Action</th>
 </tr>
 </thead>
@@ -898,7 +896,7 @@ foreach ($cursor as $array)
         print("function $func() {");
         print("  removeTag('$id', '{$tag["name"]}')");
         print("}</script>");
-        print("<div class='input-group'><button class='btn' style='font-size: 110%; color: white; background-color: {$tag["colour"]};' onclick=\"searchTag('{$tag["name"]}')\">{$tag["name"]}</button> <button type='button' class='btn btn-xs' 
+        print("<div class='input-group'><button class='btn' style='display: inline-block; padding: 2px 2px 2px 2px; font-size: 125%; color: white; background-color: {$tag["colour"]};' onclick=\"searchTag('{$tag["name"]}')\">{$tag["name"]}</button> <button type='button' class='btn btn-xs' 
                       onclick='".$func."()'>
                   <i class='glyphicon glyphicon-minus'></i>
               </button></div>
@@ -957,9 +955,10 @@ foreach ($cursor as $array)
     else{
         print "<td>".$array['scans'][$av_vendor]."</td>";
     }
-    print "<td>".$array['size']."</td>";
-    print "<td>".$array['type']."</td>";
-    print "<td>";
+      
+    print "<td>Type: ".$array['type']."<br>";
+    print "Size: ".$array['size'];
+    print "</td><td>";
     if (isset($_GET["archive"])) {
 
     print "<button type='button' class='btn btn-primary btn-xs' data-toggle='tooltip' data-placement='top' title='UnArchive' onclick='UnarchFunc(".number_format($array['id'],0,'.','').")'><span class='glyphicon glyphicon-floppy-remove' aria-hidden='true'></span></button>";
