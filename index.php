@@ -14,42 +14,10 @@ require('VT/config.php');
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
-
+    <link rel="stylesheet" href="css/house_style.css">
 </head>
 
 <body>
-<style>
-    .modal-content {
-    width: 900px;
-    margin-left: -150px;
-    }
-    textarea{
-    width: 870px;
-    height: 300px;
-    }
-
-   .filenames {
-      font-family: monospace !important;
-    }
-    mark {
-    background-color: red;
-    color: black;
-    }
-    .modal-header {
-    padding:9px 15px;
-    }
-    .container{
-        width: 100%;
-    }
-    .progress-bar.animate {
-        width: 100%;
-    }
-
-    td {
-      padding: 2px -15px 2px 2px !important;
-    }
-}
-</style>
 
 <script>
 function toggle(source) {
@@ -435,11 +403,10 @@ function addTheTag(name, id) {
       data: {tag:name, id:id},
       success: function(data) {
         console.log(data);
-        //location.reload();
+        location.reload();
       },
       async: true
     });
-    location.reload();
 }
 
 function addATag(id) {
@@ -578,6 +545,9 @@ function runMISP(title) {
 
 }
 
+function searchTag(tag) {
+  $("#mytable").bootstrapTable("resetSearch", tag);
+}
 function runViper(title) {
 
     resp = "<div class='progress'><div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%;'></div></div>";
@@ -816,7 +786,10 @@ foreach ($cursor as $array)
         print "<tr id='tr".number_format($array['id'],0,'.','')."'>";
     }
     print "<td><input type='checkbox' name='selected' id='".$array['md5']."' value='".number_format($array['id'],0,'.','')."'/></td>";
-    print "<td data-id='".$int."'><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">Event ".$int."</button><button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>";
+   print "<td data-id='".$int."'><button type='button' class='btn btn-info btn-xs' data-toggle='tooltip' data-placement='top' title='Sample Details' onclick=\"launch_info_modal(".number_format($array['id'],0,'.','').",'Details')\">Event ".$int."</button>";
+
+    if ($array["ruleset_name"] != "Manual Import")
+      print "<button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' data-placement='top' title='Yara Results' onclick=\"launch_yara_modal(".number_format($array['id'],0,'.','').",'Yara')\">".$array['ruleset_name']."</button></td>";
     print "<td>".$array['subject']."</td>";
     print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$array['sha256']."' target='_blank'>".$array['md5']."</a>";
     if(!empty($array['url'])){print "<span class='label label-default'>ITW</span>";}
@@ -922,7 +895,7 @@ foreach ($cursor as $array)
         print("function $func() {");
         print("  removeTag('$id', '$tag')");
         print("}</script>");
-        print("<div class='input-group'>$tag <button type='button' class='btn btn-xs' 
+        print("<div class='input-group'><button style='color: {$tag["colour"]};' onclick=searchTag('{$tag["name"]}')>{$tag["name"]}</button> <button type='button' class='btn btn-xs' 
                       onclick='".$func."()'>
                   <i class='glyphicon glyphicon-minus'></i>
               </button></div>

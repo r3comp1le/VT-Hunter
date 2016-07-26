@@ -10,7 +10,8 @@ $tags = new MongoCollection($db, "tags");
 $colour = $tags->findOne(array("name"=>$_POST["tag"]))["colour"];
 
 $id = intval($_POST["id"]);
-$tag = "<span style=\"color: $colour\">". $_POST["tag"]."</span>";
+$tag = $_POST["tag"];
+
 
 print("Finding $id...");
 $cursor = $collection->findOne(array("id"=>$id));
@@ -21,7 +22,7 @@ if (!array_key_exists("user-tags", $cursor)) {
                       $cursor
                       );
 } else {
-  array_push($cursor["user-tags"], $tag);
+  array_push($cursor["user-tags"], array("name"=>$tag, "colour"=>$colour));
 
   $collection->update(array("id"=>$id),
                       $cursor
