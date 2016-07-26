@@ -10,8 +10,8 @@ table tr td {
   margin-left: -150px; }
 
 textarea {
-  width: 50%;
-  height: 20%; }
+  width: 100%;
+  height: 500px; }
 
 .filenames {
   font-family: monospace !important; }

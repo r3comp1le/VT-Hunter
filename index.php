@@ -15,6 +15,9 @@ require('VT/config.php');
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
     <link rel="stylesheet" href="css/house_style.css">
+    <link rel="stylesheet" href="css/spectrum.css">
+    <script src="js/spectrum.js"></script>
+
 </head>
 
 <body>
@@ -26,6 +29,7 @@ function toggle(source) {
         checkboxes[i].checked = source.checked;
     }
 }
+
 
 function launch_info_modal(id, title){
     $.ajax({
@@ -255,12 +259,12 @@ function downloadFunc() {
 }
 
 function importEvent() {
-    response = "<form><label for='md5'>MD5 (One per line!):</label>";
+    response = "<form><label for='md5'>Hashes (One per line!):</label><br>";
     response += "<textarea name='md5' id='importhash' placeholder='hashes'></textarea>";
     response += "<button type='button' class='btn btn-success' onclick='importFunc()'>";
     response += "Import</button></form>";
     $("#modal-bod").html(response);
-    $("#modal-title").html("<h3>Import Event</h3");
+    $("#modal-title").html("<h3>Import Events</h3");
     $("#scrap_mod").modal("show");
 }
 
@@ -383,8 +387,7 @@ function addTag(id) {
     }
     resp += "<br><br><h4>Or create a new tag:</h4><br>";
     resp += "<input placeholder='Tag Name' id='cmnt' ></input><br>";
-    resp += "<style> .inlinepicker { display: inline-block; }</style>";
-    resp += "<label for='clr'>Colour:</label><input value='#00ff00' id='colorpick'></input>"
+    resp += "<label for='clr'>Colour:</label><input type='color' id='custom' />"
     resp += "<button type='button' class='btn btn-success' ";
     resp += "onclick='addATag("+id+")'>Create</button>";
     $("#modal-bod").html(resp);
@@ -411,7 +414,7 @@ function addTheTag(name, id) {
 
 function addATag(id) {
     var val = document.getElementById("cmnt").value;
-    var col = document.getElementById("colorpick").value;
+    var col = document.getElementById("custom").value;
     console.log("Adding "+val+" to "+id);
     $.ajax({
       type: "POST",
@@ -895,7 +898,7 @@ foreach ($cursor as $array)
         print("function $func() {");
         print("  removeTag('$id', '{$tag["name"]}')");
         print("}</script>");
-        print("<div class='input-group'><button style='color: {$tag["colour"]};' onclick=searchTag('{$tag["name"]}')>{$tag["name"]}</button> <button type='button' class='btn btn-xs' 
+        print("<div class='input-group'><button style='color: {$tag["colour"]};' onclick=\"searchTag('{$tag["name"]}')\">{$tag["name"]}</button> <button type='button' class='btn btn-xs' 
                       onclick='".$func."()'>
                   <i class='glyphicon glyphicon-minus'></i>
               </button></div>
