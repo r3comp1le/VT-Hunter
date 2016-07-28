@@ -212,6 +212,7 @@ echo $archStatus ?>
     ?>
   
   <th data-field="tag" data-sortable="true" data-sorter="tagsorter">Tags</th>
+  <th data-field="alert" data-sortable="true">Alert Date</th>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="compile" data-sortable="true">Compile</th>
   <th data-field="av" data-sortable="true" data-sorter="idSorter" 
@@ -404,7 +405,8 @@ foreach ($cursor as $event)
 
     #AV Logic
     print "<td>".$event['first_seen']."</td>";
-	print "<td>".$event['timestamp']."</td>";
+	  print "<td>{$event["date"]}</td>";
+    print "<td>".$event['timestamp']."</td>";
     if($event['positives'] == 0)
     {
         print "<td data-id='" . $event['positives'] . "'><button type='button' class='btn btn-danger btn-xs'>".$event['positives']."/".$event['total']."</button></td>";

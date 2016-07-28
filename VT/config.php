@@ -7,10 +7,10 @@ $mongo_collection = "samples";
 $mongo_collection_stats = "stats";
 
 #Crits Connections
-$crits_on = "true";
+$crits_on = "false";
 $crits_url = "https://sig02.threatreveal.com/crits"; #Until /api, https://crits.com/crits/api/v1
 $crits_api_key = "bff80ead9916893f71cab67ac533632eab09caee";
-$crits_user = "username";
+$crits_user = "anish";
 
 #MISP Connections
 $misp_on = "true";
