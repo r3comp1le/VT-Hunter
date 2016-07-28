@@ -35,9 +35,9 @@ function addTheTag(name, id) {
       data: {tag:name, id:id},
       success: function(data) {
         console.log(data);
-        location.reload();
+        //location.reload();
       },
-      async: true
+      async: false
     });
 }
 
