@@ -5,6 +5,7 @@ $mongo_server_port = "27017";
 $mongo_db = "vt";
 $mongo_collection = "samples";
 $mongo_collection_stats = "stats";
+$mongo_collection_tags = "tags";
 
 #Crits Connections
 $crits_on = "false";
@@ -14,6 +15,7 @@ $crits_user = "anish";
 
 #MISP Connections
 $misp_on = "true";
+
 $misp_url = "https://sig01.threatreveal.com";
 $misp_api_key = "APA47IjFZ3XBftsyu0tfC7pw9qYYPLTqBuvJdPoc";
 

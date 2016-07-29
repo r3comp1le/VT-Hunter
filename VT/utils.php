@@ -1,8 +1,6 @@
 <?php
-$log = fopen("vt.utils.log", "w");
-
-function add_event($thejson, $collection, $stats) {
- try {
+function add_event($thejson, $collection, $stats, $taco, $tags) {
+    require("config.php");
     $int_add = 0;
     $date = date("F j, Y, g:i a");
     #Extract event info
@@ -231,6 +229,24 @@ function add_event($thejson, $collection, $stats) {
             "total" => $vt_total,
             "type" => $vt_type
             );
+
+        //Add any tags that don't exist        
+        echo "CONNECTING TO "."mongodb://".$mongo_server_host.":".$mongo_server_port;
+        $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
+        $db = $m->selectDB($mongo_db);
+        $tags = explode(",", $tags);
+        //Santize
+        for ($i = 0; $i < count($tags); $i++) {
+          $tags[$i] = array("name"=>$tags[$i], "colour"=>"#ff0000");
+        }
+        foreach ($tags as $tag) {
+          if ($taco->find(array("name"=>$tag["name"]))->count() == 0) {
+            $taco->insert($tag);
+          } 
+        }
+        $sample_details["user-tags"] =$tags;
+
+
         $sample_details = array_merge($sample_details, $sample_alert_info);
 
         $collection->insert($sample_details);

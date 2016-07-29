@@ -1,23 +1,22 @@
 <?php
 require('config.php');
-
-# Log file
-$filesize = filesize("vt.import.log");
-#Make sure we don't have a really big file
-if($filesize < 1000){$log = fopen("vt.import.log", "a");}
-#If we've gone over 1000 lines, clear the file
-else{$log = fopen("vt.import.log", "w");}
-
 require('utils.php');
-
-
 #Get today's date
 $date = date("F j, Y, g:i a");
 
-fwrite($log, "<b>".$date."</b><br>\n");
-
 
 foreach ($_POST["md5s"] as $MD5) { 
+  $splitdata = explode("    ", $MD5);
+  
+  $MD5 = $splitdata[0];
+  
+  print_r($splitdata);
+  if (array_key_exists(1, $splitdata)) {
+    $tags = $splitdata[1];
+  } else {
+    $tags = array();
+  }
+  
   # Get the alert feed
   $url_vt_mal = "https://www.virustotal.com/vtapi/v2/file/report?allinfo=1&apikey=$vt_mal_key&resource=$MD5";
 
@@ -36,11 +35,12 @@ foreach ($_POST["md5s"] as $MD5) {
   $db = $m->selectDB($mongo_db);
   $collection = new MongoCollection($db, $mongo_collection);
   $stats = new MongoCollection($db, $mongo_collection_stats);
+  $taco = new MongoCollection($db,  $mongo_collection_tags);
   $int_del = 0;
   $int_add = 0;
   if ($thejson["response_code"] == 1) {
     try {
-      $int_add = add_event($thejson, $collection, $stats);
+      $int_add = add_event($thejson, $collection, $stats, $taco, $tags);
     } catch (MongoConnectionException $e) {
       echo "Mongo is kill $e";
       die();
