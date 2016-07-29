@@ -1,15 +1,15 @@
 <?php
 require('config.php');
-require('utils.php');
 
 # Log file
 $filesize = filesize("vt.import.log");
-
 #Make sure we don't have a really big file
-if($filesize < 1000){$log = fopen("vt.log", "a");}
-
+if($filesize < 1000){$log = fopen("vt.import.log", "a");}
 #If we've gone over 1000 lines, clear the file
 else{$log = fopen("vt.import.log", "w");}
+
+require('utils.php');
+
 
 #Get today's date
 $date = date("F j, Y, g:i a");
@@ -27,7 +27,6 @@ foreach ($_POST["md5s"] as $MD5) {
           'request_fulluri' => true,
           )
   );
-
   $context  = stream_context_create($opts);
   $result = file_get_contents($url_vt_mal, false, $context);
   $thejson = json_decode($result, true);
@@ -39,7 +38,6 @@ foreach ($_POST["md5s"] as $MD5) {
   $stats = new MongoCollection($db, $mongo_collection_stats);
   $int_del = 0;
   $int_add = 0;
-
   if ($thejson["response_code"] == 1) {
     try {
       $int_add = add_event($thejson, $collection, $stats);
@@ -53,5 +51,4 @@ echo "Imported!";
 }
 echo "Samples Added: <span class='label label-primary'>" . $int_add . "</span><br>";
 echo "VT Alerts Deleted: <span class='label label-danger'>"  . $int_del . "</span><br>";
-
 ?>

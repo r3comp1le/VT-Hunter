@@ -35,7 +35,7 @@ function addTheTag(name, id) {
       data: {tag:name, id:id},
       success: function(data) {
         console.log(data);
-        //location.reload();
+        location.reload();
       },
       async: false
     });
@@ -57,7 +57,7 @@ function addATag(id) {
       async: false
     });
     addTheTag(val, id);
-    location.reload();
+    //location.reload();
 }
 
 function removeTag(id, tag) {

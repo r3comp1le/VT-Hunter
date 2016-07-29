@@ -45,5 +45,5 @@ $av_vendor = array("ESET-NOD32","TrendMicro","Sophos","McAfee",
 $av_multiple = is_array($av_vendor);
 
 #Allow Manual Pull of VT, MISP, CRITS
-$manual_pull = "true";
+$manual_pull = "false";
 ?>

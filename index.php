@@ -259,15 +259,16 @@ foreach ($cursor as $event)
     print number_format($event['id'],0,'.','').",'Details')\">
           #".$eventID."</button>";
     
-    if ($event["ruleset_name"] != "Manual Import")
+    if ($event["ruleset_name"] != "Manual Import") {
       print "<button type='button' class='btn btn-warning btn-xs' 
               data-toggle='tooltip' data-placement='top' title='Yara Results' 
-              onclick=\"launch_yara_modal(";
-      print number_format($event['id'],0,'.','').",'Yara')\">";
-      print $event['ruleset_name']."</button></td>";
+              onclick=\"launch_yara_modal(".number_format($event['id'],0,'.','').",'Yara')\">";
+    } else {
+      print("<br>");
+    }
+    print $event['ruleset_name']."</button></td>";
     print "<td>".$event['subject']."</td>";
-    print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/
-            ?query=".$event['sha256']."' target='_blank'>".$event['md5']."</a>";
+    print "<td id='md5'><a href='https://www.virustotal.com/intelligence/search/?query=".$event['sha256']."' target='_blank'>".$event['md5']."</a>";
     if(!empty($event['url'])){
         print "<span class='label label-default'>ITW</span>";
     }

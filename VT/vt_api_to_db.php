@@ -1,6 +1,6 @@
 <?php
 require('config.php');
-
+mb_internal_encoding("UTF-8");
 #Get today's date
 $date = date("F j, Y, g:i a");
 

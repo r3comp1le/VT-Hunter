@@ -1,11 +1,15 @@
 <?php
+$log = fopen("vt.utils.log", "w");
+
 function add_event($thejson, $collection, $stats) {
+ try {
     $int_add = 0;
     $date = date("F j, Y, g:i a");
     #Extract event info
     $vt_date = $date;
     $vt_first_seen = $thejson['first_seen'];
-    $vt_id = intval(explode("-", $thejson['scan_id'])[1]);
+    $jid = explode("-", $thejson['scan_id']);
+    $vt_id = intval($jid[1]);
     $vt_last_seen = $thejson['last_seen'];
     $vt_match = 5;
     $vt_md5 = $thejson['md5'];
@@ -235,6 +239,9 @@ function add_event($thejson, $collection, $stats) {
         }    
     }
     return $int_add;     
+ } catch (Exception $e) {
+    fwrite($log, $e);
+ }
 }
 
 ?>
