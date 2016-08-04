@@ -255,9 +255,6 @@ function add_event($thejson, $collection, $stats, $taco, $tags) {
         }    
     }
     return $int_add;     
- } catch (Exception $e) {
-    fwrite($log, $e);
- }
 }
 
 ?>

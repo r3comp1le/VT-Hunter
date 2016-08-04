@@ -281,24 +281,26 @@ foreach ($cursor as $event)
     $submission = $event["submission_names"];
 
 
-    print(chopString($submission[0], 20));
+    if (count($submission) != 0) {
+      print(chopString($submission[0], 20));
 
-    if (count($submission) > 1) {
-      $modifier = 0;
-      if (strpos($submission[0], "_")) $modifier = 1;
-      $padding = min(23, strlen($submission[0]));
-      for ($i = 0; $i < 30-$padding; $i++) echo "&nbsp";
-	    print("<button type='button' class='btn btn-xs btn-info' 
+      if (count($submission) > 1) {
+        $modifier = 0;
+        if (strpos($submission[0], "_")) $modifier = 1;
+        $padding = min(23, strlen($submission[0]));
+        for ($i = 0; $i < 30-$padding; $i++) echo "&nbsp";
+	      print("<button type='button' class='btn btn-xs btn-info' 
                       data-toggle='collapse' 
                       data-target='#names-{$event['id']}'>
                 <i class='glyphicon glyphicon-menu-down'></i>
               </button>");
 
-    print("<div  class='collapse' id='names-{$event['id']}'>");
-    foreach (array_slice($event['submission_names'], 1) as $filename)
-	  {
-	    print chopString($filename,30) . "<br>";
-	  }
+      print("<div  class='collapse' id='names-{$event['id']}'>");
+      foreach (array_slice($event['submission_names'], 1) as $filename)
+	    {
+	      print chopString($filename,30) . "<br>";
+	    }
+    }
   }
   print("</div>");
   print("</div>");
@@ -378,7 +380,7 @@ foreach ($cursor as $event)
     }
 
     echo("<td>");
-    if (array_key_exists("user-tags", $event)) {
+    if (array_key_exists("user-tags", $event) && is_array($event["user-tags"])) {
       foreach($event["user-tags"] as $tag) {
         $id = $event["id"];
         $func = uniqid("mega_hack");
