@@ -28,7 +28,7 @@ function reloadData(title) {
     $.ajax({
         type: "GET",
         url: "VT/vt_api_to_db.php",
-        async: false,
+        async: true,
         success: function(response){
             $('#load_mod').modal('hide');
             $("#modal-bod").html(response);

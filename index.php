@@ -184,7 +184,7 @@ echo $archStatus ?>
 <table id='mytable' data-toggle="table" 
        data-classes="table table-hover table-condensed" data-striped="true" 
        data-show-columns="true" data-search="true" data-pagination="true" 
-      data-page-size="20">
+      data-page-size="20" data-sort-name="alert" data-sort-order="desc">
 
   <thead>
   <tr>
@@ -212,7 +212,7 @@ echo $archStatus ?>
     ?>
   
   <th data-field="tag" data-sortable="true" data-sorter="tagsorter">Tags</th>
-  <th data-field="alert" data-sortable="true">Alert Date</th>
+  <th data-field="alert" data-sortable="true" data-sorter="datesorter">Alert Date</th>
   <th data-field="seen" data-sortable="true">First Seen</th>
   <th data-field="compile" data-sortable="true">Compile</th>
   <th data-field="av" data-sortable="true" data-sorter="idSorter" 

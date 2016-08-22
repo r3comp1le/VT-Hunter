@@ -1,6 +1,5 @@
 <?php
 require('config.php');
-mb_internal_encoding("UTF-8");
 #Get today's date
 $date = date("F j, Y, g:i a");
 
@@ -10,7 +9,8 @@ $opts = array(
     'http' => array(
         'method'  => 'GET',
         'request_fulluri' => true,
-        ),
+        'timeout' => 2
+     ),
 );
 
 $context  = stream_context_create($opts);
@@ -29,7 +29,6 @@ $collection = new MongoCollection($db, $mongo_collection);
 $stats = new MongoCollection($db, $mongo_collection_stats);
 $int_del = 0;
 $int_add = 0;
-
 # Look through JSON feed
 foreach ($thejson['notifications'] as $array)
 {
@@ -60,13 +59,15 @@ foreach ($thejson['notifications'] as $array)
       $cursor = $collection->find($hash_check);
          
       if ($cursor->count() != 0) {
-        $titles = $cursor->getNext()["submission_names"];
+        $titles = $cursor->getNext();
+        $titles = $titles["submission_names"];
         #We've seen the hash before, update the count and all that
         $url_vt_search = "http://www.virustotal.com/vtapi/v2/file/report?allinfo=1&apikey=".$vt_search_key."&resource=".$vt_md5;
         $opts_vt_search = array(
           'http' => array(
             'method'  => 'GET',
             'request_fulluri' => true,
+            'timeout' => 3,
             )
           );
         $context_vt_search  = stream_context_create($opts_vt_search);
@@ -327,13 +328,11 @@ foreach ($thejson['notifications'] as $array)
 
       }
   }
-    
 }
 
 #Molest those that got added without anything good ;_;
 $collection->remove(array("md5"=>null));
 $int_add--;
-
 echo "Samples Added: <span class='label label-primary'>" . $int_add . "</span><br>";
 echo "VT Alerts Deleted: <span class='label label-danger'>"  . $int_del . "</span><br>";
 
