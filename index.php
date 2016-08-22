@@ -423,7 +423,7 @@ foreach ($cursor as $event)
       $things_we_care_about = array();
       $found_vendor = false;
       foreach ($av_vendor as $vendor){
-          if ($event['scans'][$vendor]!=""){
+          if (array_key_exists($vendor, $event['scans']) &&$event['scans'][$vendor]!=""){
               $found_vendor = true;
               $scan = $vendor . ": ".$event["scans"][$vendor];
               $scan = (strlen($scan) > 40)?substr($scan,0,40)."...":$scan;

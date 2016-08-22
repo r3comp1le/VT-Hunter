@@ -51,7 +51,7 @@ function importFunc() {
            console.log("Imported");
            console.log(data);
          },
-         async: false
+         async: true
     });
 }
 
