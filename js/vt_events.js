@@ -35,7 +35,7 @@ function importEvent() {
     response = "<form><label for='md5'>Hashes (One per line!):</label><br>";
     response += "<textarea name='md5' id='importhash' placeholder='hashes and hashes and hashes'></textarea>";
     response += "<button type='button' class='btn btn-success' onclick='importFunc()'>";
-    response += "Import</button></form>";
+    response += "Import</button><div id='importProg'></div></form>";
     $("#modal-bod").html(response);
     $("#modal-title").html("<h3>Import Events</h3");
     $("#scrap_mod").modal("show");
@@ -43,6 +43,7 @@ function importEvent() {
 
 function importFunc() {
     var value = document.getElementById("importhash").value;
+    document.getElementById("importProg").innerHTML = "<p>Importing events....</p>";
     $.ajax({
          type: "POST",
          url: "VT/vt_import_event.php",
@@ -50,6 +51,7 @@ function importFunc() {
          success: function(data){
            console.log("Imported");
            console.log(data);
+           location.reload()
          },
          async: true
     });
