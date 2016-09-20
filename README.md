@@ -49,6 +49,15 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   - Set appropriate permissions on files and directories
   
 ### Config Settings
+
+First, copy the config file over
+
+```bash
+cp VT/config.default.php VT/config.php
+#Then edit the file
+nano VT/config.php
+```
+
   - Mongo Settings (Set: Host, Port, Database and Collection)
   - Crits Settings (Set: URL and API Key&User)
   - VT Settings
