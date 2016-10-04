@@ -32,10 +32,36 @@ function add_event($thejson, $collection, $stats, $taco, $tags) {
     $id_check = array('id' => $vt_id);
     $cursor = $collection->find($id_check);
 
-    # If VT ID already exist, delete from VTI
     if($cursor->count() > 0)
     {
-      //We already have it -- ignore.
+      $sample_details = $cursor->next();
+      //Add any tags that don't exist        
+      $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
+      $db = $m->selectDB($mongo_db);
+      $tags = explode(",", $tags);
+      //Santize
+      for ($i = 0; $i < count($tags); $i++) {
+        $tags[$i] = array("name"=>$tags[$i], "colour"=>"#ff0000");
+      }
+      foreach ($tags as $tag) {
+        if ($taco->find(array("name"=>$tag["name"]))->count() == 0) {
+          $taco->insert($tag);
+        }
+      }
+      print_r($sample_details["user-tags"]);
+      print_r($tags);
+      $sample_details["user-tags"] = (array_merge($sample_details["user-tags"], $tags));
+      $names= array();
+      $uniq = array();
+      foreach ($sample_details["user-tags"] as $tag) {
+        if (!(in_array($tag["name"], $names))) {
+           array_push($uniq,  $tag);
+           array_push($names, $tag["name"]);
+        } 
+      }
+      $sample_details["user-tags"] = $uniq;
+      $collection->update($id_check, $sample_details);
+
     } else {
       # Check if we've seen the hash before
         $hash_check = array('md5' => $vt_md5);
@@ -231,7 +257,6 @@ function add_event($thejson, $collection, $stats, $taco, $tags) {
             );
 
         //Add any tags that don't exist        
-        echo "CONNECTING TO "."mongodb://".$mongo_server_host.":".$mongo_server_port;
         $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
         $db = $m->selectDB($mongo_db);
         $tags = explode(",", $tags);
@@ -254,6 +279,7 @@ function add_event($thejson, $collection, $stats, $taco, $tags) {
 
         }    
     }
+    
     return $int_add;     
 }
 
