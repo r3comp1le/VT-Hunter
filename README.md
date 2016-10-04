@@ -95,6 +95,7 @@ There is a very basic API to import hashes, perhaps more in the future, but this
 $ curl "http://localhost/vt/api/?action=importhash&resource=3f3c50cd41e255f45818ca426e0fe49d&tags=hello,world"
 
 {"status":0,"imported":"3f3c50cd41e255f45818ca426e0fe49d","message":"Hash Imported."}
+```
 
 ```python
 import requests
