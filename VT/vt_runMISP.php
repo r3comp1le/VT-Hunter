@@ -1,4 +1,4 @@
-<?
+<?php
 require('config.php');
 
 $counter = 0;
@@ -24,7 +24,7 @@ if($misp_on == "true")
             )
         ));
         $url = $misp_url . "/events/restSearch/download";
-        $result2 = @file_get_contents($url, true, $context);
+        $result2 = file_get_contents($url, true, $context);
         if ($result2 != false){
             $thejson = json_decode($result2, true);
             if (is_array($thejson) && array_key_exists('response',$thejson)){
@@ -47,7 +47,8 @@ if($misp_on == "true")
                     }
                     $retval = $collection->findAndModify(
                          array("id" => $array['id']),
-                         array('$set' => array('misp' => "true",'misp_event' => $jsonevents))
+                         array('$set' => array('misp' => "true",'misp_event' => $jsonevents,
+                                               "misp_data"=>$jsonevent["Event"]))
                     );
                     $counter++;
                 }

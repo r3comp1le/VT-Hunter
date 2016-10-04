@@ -1,0 +1,4 @@
+config.php
+*.log
+vendor
+composer.*

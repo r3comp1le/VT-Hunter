@@ -12,7 +12,7 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
 
 ### Web Interface
   - All configuration is done in config.php
-  - Navigate to vt.php in browser to use
+  - Navigate to index.php in browser to use
 
 ### Requirements
   - VirusTotal Intelligence API
@@ -49,6 +49,15 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
   - Set appropriate permissions on files and directories
   
 ### Config Settings
+
+First, copy the config file over
+
+```bash
+cp VT/config.default.php VT/config.php
+#Then edit the file
+nano VT/config.php
+```
+
   - Mongo Settings (Set: Host, Port, Database and Collection)
   - Crits Settings (Set: URL and API Key&User)
   - VT Settings
@@ -77,3 +86,27 @@ WHY?  I like to be able to quickly filter and search on ANY of the fields.  Sort
     ```
 	
   - Make sure you Crits URL is correct. The $crits_url should be everything BEFORE the /api/v1
+
+### API
+
+There is a very basic API to import hashes, perhaps more in the future, but this is it for now.
+
+```bash
+$ curl "http://localhost/vt/api/?action=importhash&resource=3f3c50cd41e255f45818ca426e0fe49d&tags=hello,world"
+
+{"status":0,"imported":"3f3c50cd41e255f45818ca426e0fe49d","message":"Hash Imported."}
+```
+
+```python
+import requests
+
+params = {"action":"importhash", "resource":"3f3c50cd41e255f45818ca426e0fe49d", "tags":"hello,world"}
+
+req = requests.get("http://localhost/vt/api/", params=params)
+
+req.status_code
+>>> 200
+
+req.json()
+>>> {"status":0,"imported":"3f3c50cd41e255f45818ca426e0fe49d","message":"Hash Imported."}
+```
