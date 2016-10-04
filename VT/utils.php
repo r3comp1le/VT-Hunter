@@ -38,8 +38,11 @@ function add_event($thejson, $collection, $stats, $taco, $tags) {
       //Add any tags that don't exist        
       $m = new MongoClient("mongodb://".$mongo_server_host.":".$mongo_server_port);
       $db = $m->selectDB($mongo_db);
-      $tags = explode(",", $tags);
-      //Santize
+     
+      if (!is_array($tags)) {
+        $tags = explode(",", $tags);
+      }
+        //Santize
       for ($i = 0; $i < count($tags); $i++) {
         $tags[$i] = array("name"=>$tags[$i], "colour"=>"#ff0000");
       }
@@ -48,8 +51,6 @@ function add_event($thejson, $collection, $stats, $taco, $tags) {
           $taco->insert($tag);
         }
       }
-      print_r($sample_details["user-tags"]);
-      print_r($tags);
       $sample_details["user-tags"] = (array_merge($sample_details["user-tags"], $tags));
       $names= array();
       $uniq = array();
